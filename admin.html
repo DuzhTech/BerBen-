@@ -53,6 +53,8 @@
         .btn-action:hover { background: #E5E7EB; }
         .btn-action svg { width: 14px; height: 14px; stroke-width: 2.5; transition: transform 0.2s; }
         .btn-action.arrow:hover svg { transform: translateX(3px); }
+        .btn-icon-only { background: #F3F4F6; color: #6B7280; border: none; padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-icon-only:hover { background: #E5E7EB; color: #111827; }
 
         /* --- БАЗА ГОСТЕЙ --- */
         .toolbar { display: flex; justify-content: space-between; margin-bottom: 20px; }
@@ -108,7 +110,22 @@
         .booking-block.status-cancelled { background: #F3F4F6; color: #9CA3AF; border: 1px dashed #D1D5DB; text-decoration: line-through; box-shadow: none; }
         .booking-block span { font-size: 11px; font-weight: 400; opacity: 0.9; margin-top: 2px;}
 
-        /* ВИЇЗНА ПАНЕЛЬ (DRAWER) */
+        /* --- НАЛАШТУВАННЯ --- */
+        .settings-layout { display: flex; gap: 24px; height: 100%; align-items: flex-start; }
+        .settings-sidebar { width: 240px; background: var(--card-bg); border-radius: 16px; padding: 20px 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); flex-shrink: 0; }
+        .settings-nav-item { padding: 12px 16px; margin-bottom: 4px; border-radius: 10px; cursor: pointer; color: #4B5563; font-weight: 500; font-size: 14px; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        .settings-nav-item:hover { background: #F9FAFB; color: #111827; }
+        .settings-nav-item.active { background: #EFF6FF; color: var(--accent); font-weight: 600; }
+        .settings-content { flex: 1; background: var(--card-bg); border-radius: 16px; padding: 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); min-height: 500px; overflow-y: auto;}
+        .settings-title { font-size: 20px; font-weight: 600; margin-bottom: 24px; color: var(--text-main); display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Специфічні стилі для сітки цін */
+        .price-cell { display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #374151; transition: 0.2s; border-right: 1px solid #F3F4F6; width: 60px; flex-shrink: 0;}
+        .price-cell:hover { background: #F3F4F6; cursor: pointer; }
+        .price-cell.weekend-price { background: #FFFBEB; color: #B45309; }
+        .price-cell.weekend-price:hover { background: #FEF3C7; }
+
+        /* ВІКНА ТА МОДАЛКИ */
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17,24,39,0.4); backdrop-filter: blur(4px); z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; }
         .drawer-overlay.active { opacity: 1; pointer-events: all; }
         .drawer { position: absolute; top: 0; right: -600px; width: 550px; height: 100vh; background: #FFF; box-shadow: -10px 0 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: 0.4s; }
@@ -118,16 +135,29 @@
         .drawer-body { padding: 30px; overflow-y: auto; flex: 1; }
         .drawer-footer { padding: 20px 30px; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end; gap: 12px; background: #F9FAFB; }
         
+        /* Центральне модальне вікно (Конструктор цін) */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17,24,39,0.5); backdrop-filter: blur(4px); z-index: 2000; opacity: 0; pointer-events: none; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-box { background: #FFF; border-radius: 16px; width: 100%; max-width: 500px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); transform: translateY(20px); transition: 0.3s; display: flex; flex-direction: column; max-height: 90vh;}
+        .modal-overlay.active .modal-box { transform: translateY(0); }
+        .modal-header { padding: 20px 24px; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: 600; }
+        .modal-body { padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end; gap: 12px; background: #F9FAFB; border-radius: 0 0 16px 16px; }
+
+        /* Форми */
         .form-section { border: 1px solid #E5E7EB; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
         .form-section-title { font-size: 12px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; display: block; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 13px; font-weight: 500; color: #4B5563; margin-bottom: 6px; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 16px; border: 1px solid #D1D5DB; border-radius: 10px; font-size: 14px; outline: none; background: #FAFAFA; font-family: inherit; transition: 0.2s;}
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { background: #FFF; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
         .form-group select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; background-size: 16px; padding-right: 40px; cursor: pointer; }
         
+        .checkbox-group { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+        .custom-checkbox { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #4B5563; cursor: pointer; font-weight: 500; }
+        .custom-checkbox input { accent-color: var(--success); width: 18px; height: 18px; cursor: pointer; border-radius: 4px; }
+
         .status-toggle { display: flex; background: #F3F4F6; padding: 4px; border-radius: 12px; margin-bottom: 24px; }
         .status-btn { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 600; color: #6B7280; cursor: pointer; border-radius: 8px; transition: 0.2s; user-select: none; display: flex; align-items: center; justify-content: center; gap: 6px;}
         .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #D1D5DB; }
@@ -141,6 +171,8 @@
         .close-btn:hover { background: #D1D5DB; }
         .btn-secondary { background: white; border: 1px solid #D1D5DB; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s;}
         .btn-secondary:hover { background: #F9FAFB; }
+        .btn-success { background: var(--success); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-success:hover { background: #059669; }
     </style>
 </head>
 <body>
@@ -156,13 +188,15 @@
         <div class="menu-item" onclick="switchView('guests')" id="menu-guests">
             <svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>База гостей
         </div>
-        <div class="menu-item"><svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>Налаштування</div>
+        <div class="menu-item" onclick="switchView('settings')" id="menu-settings">
+            <svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>Налаштування
+        </div>
     </div>
 
     <div class="main-content">
         <div class="header">
             <h1 id="pageTitle">Бронювання</h1>
-            <button class="btn-primary" onclick="openNewBookingDrawer()">
+            <button class="btn-primary" onclick="openNewBookingDrawer()" id="mainActionButton">
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path></svg>
                 Створити бронь
             </button>
@@ -216,7 +250,220 @@
                     </tbody>
             </table>
         </div>
+
+        <div id="view-settings" style="display: none; height: 100%;">
+            <div class="settings-layout">
+                <div class="settings-sidebar">
+                    <div class="settings-nav-item active" onclick="switchSettingsTab('rooms', this)">Номери</div>
+                    <div class="settings-nav-item" onclick="switchSettingsTab('prices', this)">Конструктор цін</div>
+                    <div class="settings-nav-item" onclick="switchSettingsTab('discounts', this)">Знижки</div>
+                    <div class="settings-nav-item" onclick="switchSettingsTab('services', this)">Додаткові послуги</div>
+                </div>
+
+                <div class="settings-content">
+                    
+                    <div id="set-rooms" class="settings-tab-content">
+                        <div class="settings-title">
+                            Категорії та Номери
+                            <button class="btn-primary" style="padding: 10px 16px; font-size: 13px;">+ Додати номер</button>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr><th>Назва</th><th>Місткість</th><th>Доступність</th><th>Дія</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Номер 1</strong><br><span style="color: #6B7280; font-size: 12px;">Двомісний</span></td>
+                                    <td>2 гостя</td>
+                                    <td><span class="badge confirmed" style="display: inline-flex; align-items: center; gap: 6px;"><div style="width: 6px; height: 6px; background: #059669; border-radius: 50%;"></div> Увімкнено</span></td>
+                                    <td><button class="btn-icon-only"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Номер 2</strong><br><span style="color: #6B7280; font-size: 12px;">Сімейний</span></td>
+                                    <td>4 гостя</td>
+                                    <td><span class="badge confirmed" style="display: inline-flex; align-items: center; gap: 6px;"><div style="width: 6px; height: 6px; background: #059669; border-radius: 50%;"></div> Увімкнено</span></td>
+                                    <td><button class="btn-icon-only"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Номер 3</strong><br><span style="color: #6B7280; font-size: 12px;">Люкс</span></td>
+                                    <td>2 гостя</td>
+                                    <td><span class="badge confirmed" style="display: inline-flex; align-items: center; gap: 6px;"><div style="width: 6px; height: 6px; background: #059669; border-radius: 50%;"></div> Увімкнено</span></td>
+                                    <td><button class="btn-icon-only"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Номер 4</strong><br><span style="color: #6B7280; font-size: 12px;">Стандарт</span></td>
+                                    <td>2 гостя</td>
+                                    <td><span class="badge confirmed" style="display: inline-flex; align-items: center; gap: 6px;"><div style="width: 6px; height: 6px; background: #059669; border-radius: 50%;"></div> Увімкнено</span></td>
+                                    <td><button class="btn-icon-only"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="set-prices" class="settings-tab-content" style="display: none;">
+                        <div class="settings-title">
+                            Конструктор цін
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn-secondary" style="padding: 10px 16px; font-size: 13px; color: #DC2626; border-color: #FECACA; background: #FEF2F2;">Видалити ціни</button>
+                                <button class="btn-success" style="padding: 10px 16px; font-size: 13px; display: flex; gap: 6px; align-items: center;" onclick="openPriceModal()">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                    Конструктор
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="timeline-wrapper" style="margin-top: 20px;">
+                            <div class="timeline-sidebar">
+                                <div class="timeline-sidebar-header">Номери</div>
+                                <div id="priceRoomsList"></div>
+                            </div>
+                            <div class="timeline-grid-container" id="priceScroll">
+                                <div class="timeline-months" id="priceMonths"></div>
+                                <div class="timeline-dates" id="priceDates"></div>
+                                <div class="timeline-rows" id="priceGrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="set-discounts" class="settings-tab-content" style="display: none;">
+                        <div class="settings-title">
+                            Налаштування знижок
+                        </div>
+                        <p style="color: #6B7280; font-size: 14px; margin-bottom: 24px; max-width: 600px; line-height: 1.5;">Створюйте знижки, які будуть автоматично застосовуватися при бронюванні. Збільшуйте тривалість бронювань, надаючи знижки для гостей, які бронюють декілька діб.</p>
+                        
+                        <table>
+                            <thead>
+                                <tr><th>Умова</th><th>Знижка</th><th>Номери</th><th>Дії</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Діб в бронюванні: 2</strong></td>
+                                    <td><span class="badge confirmed" style="font-size: 14px;">15%</span></td>
+                                    <td>Всі номери</td>
+                                    <td>
+                                        <div style="display: flex; gap: 8px;">
+                                            <button class="btn-icon-only"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
+                                            <button class="btn-icon-only" style="color: #DC2626;"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Діб в бронюванні: 3</strong></td>
+                                    <td><span class="badge confirmed" style="font-size: 14px;">20%</span></td>
+                                    <td>Всі номери</td>
+                                    <td>
+                                        <div style="display: flex; gap: 8px;">
+                                            <button class="btn-icon-only"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
+                                            <button class="btn-icon-only" style="color: #DC2626;"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button class="btn-secondary" style="margin-top: 20px; font-size: 13px;">+ Додати знижку</button>
+                    </div>
+
+                    <div id="set-services" class="settings-tab-content" style="display: none;">
+                        <div class="settings-title">
+                            Системні додаткові послуги
+                        </div>
+                        <table style="margin-bottom: 40px;">
+                            <thead>
+                                <tr><th>Назва</th><th>Номери</th><th>Ціна (грн)</th><th>Доступність</th><th>Дії</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Пізній виїзд</strong></td>
+                                    <td>Всі</td>
+                                    <td>0</td>
+                                    <td><span class="badge cancelled">Не активна</span></td>
+                                    <td><button class="btn-icon-only"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ранній заїзд</strong></td>
+                                    <td>Всі</td>
+                                    <td>0</td>
+                                    <td><span class="badge cancelled">Не активна</span></td>
+                                    <td><button class="btn-icon-only"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="settings-title">
+                            Ваші додаткові послуги
+                            <button class="btn-success" style="padding: 10px 16px; font-size: 13px;">+ Додаткова послуга</button>
+                        </div>
+                        <p style="color: #6B7280; font-size: 14px; margin-bottom: 24px;">Створюйте додаткові послуги, які ви можете додавати до бронювань (наприклад, Чан, Дрова, Екскурсія).</p>
+                        
+                        <table>
+                            <thead>
+                                <tr><th>Назва</th><th>Номери</th><th>Ціна (грн)</th><th>Подобова</th><th>За гостя</th><th>Доступність</th><th>Дії</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Додаткові гості</strong></td>
+                                    <td>Всі</td>
+                                    <td><span style="color: #4B5563; font-size: 13px;">1 - 0 грн<br>2 - 0 грн<br>3 - 0 грн<br>4 - 2000 грн</span></td>
+                                    <td>Так</td>
+                                    <td>Так</td>
+                                    <td><span class="badge confirmed">Активна</span></td>
+                                    <td>
+                                        <div style="display: flex; gap: 8px;">
+                                            <button class="btn-icon-only"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </div>
+
+    <div id="priceBuilderModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                Конструктор цін
+                <button class="close-btn" style="width: 28px; height: 28px;" onclick="closePriceModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Оберіть номери (можна декілька):</label>
+                    <select><option>Усі номери</option><option>Номер 1</option><option>Номер 2</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Встановіть ціну:</label>
+                    <input type="number" placeholder="0 грн" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Оберіть період:</label>
+                    <select><option>Поточний місяць</option><option>Наступний місяць</option><option>Довільний період</option></select>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Оберіть дні тижня:</label>
+                    <div class="checkbox-group">
+                        <label class="custom-checkbox"><input type="checkbox" checked> Усі дні</label>
+                        <label class="custom-checkbox"><input type="checkbox" checked> Понеділок</label>
+                        <label class="custom-checkbox"><input type="checkbox" checked> Вівторок</label>
+                        <label class="custom-checkbox"><input type="checkbox" checked> Середа</label>
+                        <label class="custom-checkbox"><input type="checkbox" checked> Четвер</label>
+                        <label class="custom-checkbox"><input type="checkbox" checked> П'ятниця</label>
+                        <label class="custom-checkbox"><input type="checkbox" checked> Субота</label>
+                        <label class="custom-checkbox"><input type="checkbox" checked> Неділя</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closePriceModal()">Закрити</button>
+                <button class="btn-success">Зберегти ціни</button>
+            </div>
+        </div>
+    </div>
+
 
     <div id="bookingDrawer" class="drawer-overlay">
         <div class="drawer">
@@ -292,10 +539,10 @@
         }
         
         const roomsList = [
-            { id: "Номер 1", short: "Номер 1", desc: "Двомісний" },
-            { id: "Номер 2", short: "Номер 2", desc: "Сімейний" },
-            { id: "Номер 3", short: "Номер 3", desc: "Люкс" },
-            { id: "Номер 4", short: "Номер 4", desc: "Стандарт" }
+            { id: "Номер 1", short: "Номер 1", desc: "Двомісний", priceWeekday: 4000, priceWeekend: 5000 },
+            { id: "Номер 2", short: "Номер 2", desc: "Сімейний", priceWeekday: 6500, priceWeekend: 7500 },
+            { id: "Номер 3", short: "Номер 3", desc: "Люкс", priceWeekday: 6500, priceWeekend: 7500 },
+            { id: "Номер 4", short: "Номер 4", desc: "Стандарт", priceWeekday: 6500, priceWeekend: 7500 }
         ];
 
         // --- НАВІГАЦІЯ ПО МЕНЮ ---
@@ -312,11 +559,15 @@
             document.getElementById('view-list').style.display = 'none';
             document.getElementById('view-grid').style.display = 'none';
             document.getElementById('view-guests').style.display = 'none';
+            document.getElementById('view-settings').style.display = 'none';
+
+            // Показуємо кнопку "Створити бронь" скрізь, окрім налаштувань
+            document.getElementById('mainActionButton').style.display = 'flex';
 
             if(viewName === 'list') {
                 document.getElementById('view-list').style.display = 'block';
                 document.getElementById('pageTitle').innerText = 'Бронювання';
-                renderTable(allBookings); // Додано виклик рендеру таблиці для оновлення
+                renderTable(allBookings);
             } else if(viewName === 'grid') {
                 document.getElementById('view-grid').style.display = 'flex';
                 document.getElementById('pageTitle').innerText = 'Шахматка';
@@ -325,8 +576,26 @@
                 document.getElementById('view-guests').style.display = 'block';
                 document.getElementById('pageTitle').innerText = 'База гостей';
                 renderGuests(); 
+            } else if(viewName === 'settings') {
+                document.getElementById('view-settings').style.display = 'block';
+                document.getElementById('pageTitle').innerText = 'Налаштування системи';
+                document.getElementById('mainActionButton').style.display = 'none'; 
+                renderPriceGrid(); // Малюємо сітку цін при відкритті налаштувань
             }
         }
+
+        // Логіка перемикання вкладок всередині Налаштувань
+        function switchSettingsTab(tabName, el) {
+            document.querySelectorAll('.settings-nav-item').forEach(nav => nav.classList.remove('active'));
+            el.classList.add('active');
+
+            document.querySelectorAll('.settings-tab-content').forEach(content => content.style.display = 'none');
+            document.getElementById('set-' + tabName).style.display = 'block';
+        }
+
+        // Відкриття/Закриття Модалки Конструктора цін
+        function openPriceModal() { document.getElementById('priceBuilderModal').classList.add('active'); }
+        function closePriceModal() { document.getElementById('priceBuilderModal').classList.remove('active'); }
 
         async function loadBookings() {
             try {
@@ -392,7 +661,7 @@
 
         document.getElementById('guestSearch').addEventListener('input', (e) => renderGuests(e.target.value));
 
-        // --- ТАБЛИЦЯ БРОНЮВАНЬ (ВИПРАВЛЕНО ФІЛЬТРИ) ---
+        // --- ТАБЛИЦЯ БРОНЮВАНЬ ---
         function renderTable(data) {
             const tbody = document.getElementById('bookingsTableBody');
             tbody.innerHTML = '';
@@ -423,7 +692,6 @@
             });
         }
 
-        // Обробка кліків по табах (Майбутні / Скасовані)
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -443,7 +711,7 @@
             });
         });
 
-        // --- ШАХМАТКА ---
+        // --- ШАХМАТКА БРОНЮВАНЬ ---
         function renderTimeline() {
             const monthsContainer = document.getElementById('timelineMonths');
             const datesContainer = document.getElementById('timelineDates');
@@ -518,7 +786,54 @@
             if(timelineBaseDate.getMonth() === (new Date()).getMonth()) document.getElementById('timelineScroll').scrollLeft = 2 * cellWidth; 
         }
 
-        // --- ПАНЕЛЬ ДЕТАЛЕЙ ---
+        // --- СІТКА ЦІН (Конструктор) ---
+        function renderPriceGrid() {
+            const monthsContainer = document.getElementById('priceMonths');
+            const datesContainer = document.getElementById('priceDates');
+            const gridContainer = document.getElementById('priceGrid');
+            const roomsContainer = document.getElementById('priceRoomsList');
+            
+            if(!monthsContainer) return; // Запобіжник
+
+            monthsContainer.innerHTML = ''; datesContainer.innerHTML = ''; gridContainer.innerHTML = ''; roomsContainer.innerHTML = '';
+
+            const startDate = new Date(); // Завжди показуємо від сьогодні
+            const daysCount = 30; 
+            const cellWidth = 60; 
+            const daysArr = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+
+            let currentMonth = startDate.getMonth();
+            let monthName = startDate.toLocaleString('uk-UA', { month: 'long', year: 'numeric' });
+            let daysInCurrentMonth = 0;
+
+            for (let i = 0; i < daysCount; i++) {
+                const d = new Date(startDate); d.setDate(startDate.getDate() + i);
+                if (d.getMonth() !== currentMonth) {
+                    monthsContainer.innerHTML += `<div class="timeline-month-cell" style="width: ${daysInCurrentMonth * cellWidth}px">${monthName}</div>`;
+                    currentMonth = d.getMonth(); monthName = d.toLocaleString('uk-UA', { month: 'long', year: 'numeric' }); daysInCurrentMonth = 1;
+                } else { daysInCurrentMonth++; }
+                
+                const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+                datesContainer.innerHTML += `<div class="timeline-date ${isWeekend ? 'weekend' : ''}" style="height: 50px;">${d.getDate()} <span>${daysArr[d.getDay()]}</span></div>`;
+            }
+            monthsContainer.innerHTML += `<div class="timeline-month-cell" style="width: ${daysInCurrentMonth * cellWidth}px">${monthName}</div>`;
+
+            roomsList.forEach((room, roomIndex) => {
+                roomsContainer.innerHTML += `<div class="timeline-room" style="height: 50px;">${room.short}<span>${room.desc}</span></div>`;
+                let rowHtml = `<div class="timeline-row-bg" style="height: 50px;">`;
+                for (let i = 0; i < daysCount; i++) {
+                    const d = new Date(startDate); d.setDate(startDate.getDate() + i);
+                    const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+                    const price = isWeekend ? room.priceWeekend : room.priceWeekday;
+                    rowHtml += `<div class="price-cell ${isWeekend ? 'weekend-price' : ''}">${price}</div>`;
+                }
+                rowHtml += `</div>`;
+                gridContainer.innerHTML += rowHtml;
+            });
+        }
+
+
+        // --- ПАНЕЛЬ ДЕТАЛЕЙ БРОНЮВАННЯ ---
         const checkOutPicker = flatpickr("#adminCheckOut", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y" });
         const checkInPicker = flatpickr("#adminCheckIn", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", onChange: function(s, d) { checkOutPicker.set("minDate", d); }});
 
