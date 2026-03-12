@@ -41,56 +41,24 @@
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .header h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.5px; }
         
-        /* ПРЕМІУМ КНОПКА (Створити бронь) */
         .btn-primary { 
             background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
-            color: white; 
-            padding: 12px 24px; 
-            border: none; 
-            border-radius: 10px; 
-            font-size: 14px;
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            color: white; padding: 12px 24px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; 
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            display: flex; align-items: center; gap: 8px;
         }
-        .btn-primary:hover { 
-            background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
-            transform: translateY(-2px);
-        }
+        .btn-primary:hover { background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35); transform: translateY(-2px); }
         .btn-primary:active { transform: translateY(0); }
-        .btn-primary svg { stroke-width: 2.5; }
 
-        /* ПРЕМІУМ КНОПКА (Деталі в таблиці) */
         .btn-action {
-            background: #F3F4F6;
-            color: #374151;
-            border: 1px solid transparent;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            background: #F3F4F6; color: #374151; border: 1px solid transparent; padding: 8px 16px; border-radius: 8px;
+            font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;
         }
-        .btn-action:hover {
-            background: #E5E7EB;
-            border-color: #D1D5DB;
-            color: #111827;
-        }
+        .btn-action:hover { background: #E5E7EB; border-color: #D1D5DB; color: #111827; }
         .btn-action svg { width: 14px; height: 14px; stroke-width: 2.5; transition: transform 0.2s; }
         .btn-action:hover svg { transform: translateX(3px); }
 
-        /* Картка і Таблиця */
         .card { background-color: var(--card-bg); border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); }
-        
         .tabs { display: flex; gap: 20px; border-bottom: 1px solid #E5E7EB; margin-bottom: 20px; padding-bottom: 10px; }
         .tab { color: var(--text-muted); font-weight: 500; cursor: pointer; padding-bottom: 10px; margin-bottom: -11px; transition: 0.2s;}
         .tab:hover { color: #374151; }
@@ -101,7 +69,6 @@
         td { padding: 16px; border-bottom: 1px solid #E5E7EB; font-size: 14px; color: var(--text-main); vertical-align: middle; }
         tr:hover td { background-color: #F9FAFB; }
         
-        /* Статуси */
         .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; }
         .badge.new { background-color: #DBEAFE; color: #1E40AF; }
         .badge.confirmed { background-color: #D1FAE5; color: #065F46; }
@@ -110,7 +77,7 @@
         .client-info strong { display: block; margin-bottom: 4px; }
         .client-info span { color: var(--text-muted); font-size: 13px; }
 
-        /* DRAWER (Виїзна панель) */
+        /* DRAWER */
         .drawer-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(17, 24, 39, 0.4); backdrop-filter: blur(4px);
@@ -143,7 +110,6 @@
             width: 100%; padding: 12px 16px; border: 1px solid #D1D5DB; border-radius: 10px; font-size: 14px; color: #111827; outline: none; transition: all 0.2s ease; background: #FAFAFA; font-family: inherit;
         }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { background: #FFF; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
-
         .form-group select {
             appearance: none; -webkit-appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
@@ -152,9 +118,10 @@
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
         .status-toggle { display: flex; background: #F3F4F6; padding: 4px; border-radius: 10px; margin-bottom: 24px; }
-        .status-btn { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 600; color: #6B7280; cursor: pointer; border-radius: 8px; transition: 0.2s; }
+        .status-btn { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 600; color: #6B7280; cursor: pointer; border-radius: 8px; transition: 0.2s; user-select: none; }
+        /* Коли кнопка активна, вона стає білою з тіню */
         .status-btn.active { background: #FFFFFF; color: var(--text-main); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-
+        
         .btn-secondary { background: white; border: 1px solid #D1D5DB; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; color: #374151; transition: 0.2s;}
         .btn-secondary:hover { background: #F9FAFB; }
     </style>
@@ -209,11 +176,11 @@
             </div>
             
             <div class="drawer-body">
-                <div class="status-toggle">
-                    <div class="status-btn active">🔄 Нова</div>
-                    <div class="status-btn">✅ Заїхав</div>
-                    <div class="status-btn">🚪 Виїхав</div>
-                    <div class="status-btn" style="color: #EF4444;">❌ Скасовано</div>
+                <div class="status-toggle" id="statusContainer">
+                    <div class="status-btn active" data-status="Нова бронь">🔄 Нова</div>
+                    <div class="status-btn" data-status="Підтверджено">✅ Заїхав</div>
+                    <div class="status-btn" data-status="Виїхав">🚪 Виїхав</div>
+                    <div class="status-btn" data-status="Скасовано" style="color: #EF4444;">❌ Скасовано</div>
                 </div>
 
                 <form id="adminBookingForm">
@@ -303,6 +270,16 @@
         
         let allBookings = [];
 
+        // Логіка перемикання статусів (РОБИТЬ КНОПКИ ЖИВИМИ)
+        const statusButtons = document.querySelectorAll('.status-btn');
+        statusButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Забираємо active у всіх кнопок і даємо тій, на яку клікнули
+                statusButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
         // Календарі
         const checkOutPicker = flatpickr("#adminCheckOut", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", minDate: "today" });
         const checkInPicker = flatpickr("#adminCheckIn", {
@@ -332,7 +309,6 @@
                 return;
             }
 
-            // Рендер таблиці з новими кнопками Деталі
             data.forEach((b, index) => {
                 const inDate = new Date(b.checkIn);
                 const outDate = new Date(b.checkOut);
@@ -367,48 +343,60 @@
             });
         }
 
-        // --- ЛОГІКА DRAWER (Панелі) ---
-        const drawer = document.getElementById('bookingDrawer');
-        const form = document.getElementById('adminBookingForm');
-
+        // Відкриття для НОВОЇ броні
         function openNewBookingDrawer() {
             document.getElementById('drawerTitle').innerText = 'Нове бронювання';
             document.getElementById('adminSubmitBtn').innerText = 'Зберегти бронь';
-            form.reset();
+            document.getElementById('adminBookingForm').reset();
             checkInPicker.clear();
             checkOutPicker.clear();
-            drawer.classList.add('active');
+            
+            // Скидаємо статус на "Нова"
+            statusButtons.forEach(b => b.classList.remove('active'));
+            document.querySelector('.status-btn[data-status="Нова бронь"]').classList.add('active');
+
+            document.getElementById('bookingDrawer').classList.add('active');
         }
 
-        // Відкрити панель з існуючими даними
+        // Відкриття ДЕТАЛЕЙ існуючої броні
         function openDetails(index) {
             const booking = allBookings[index];
             
             document.getElementById('drawerTitle').innerText = `Деталі броні: ${booking.name.replace(' (Ручна бронь)', '')}`;
             document.getElementById('adminSubmitBtn').innerText = 'Оновити бронь';
             
-            // Заповнюємо поля
             document.getElementById('adminName').value = booking.name.replace(' (Ручна бронь)', '');
             document.getElementById('adminPhone').value = booking.phone;
-            
-            // Встановлюємо дати в календарі Flatpickr
             checkInPicker.setDate(booking.checkIn);
             checkOutPicker.setDate(booking.checkOut);
 
-            drawer.classList.add('active');
+            // Підсвічуємо правильну кнопку статусу
+            statusButtons.forEach(b => b.classList.remove('active'));
+            let matchedBtn = document.querySelector(`.status-btn[data-status="${booking.status}"]`);
+            if(matchedBtn) {
+                matchedBtn.classList.add('active');
+            } else {
+                // Якщо статус невідомий, ставимо Нова за замовчуванням
+                document.querySelector('.status-btn[data-status="Нова бронь"]').classList.add('active');
+            }
+
+            document.getElementById('bookingDrawer').classList.add('active');
         }
 
         function closeDrawer() {
-            drawer.classList.remove('active');
+            document.getElementById('bookingDrawer').classList.remove('active');
         }
 
         // Збереження
-        form.addEventListener('submit', async function(e) {
+        document.getElementById('adminBookingForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = document.getElementById('adminSubmitBtn');
             const originalText = btn.innerText;
             btn.innerText = "Збереження...";
             btn.disabled = true;
+
+            // Читаємо, яка кнопка статусу зараз активна
+            const activeStatus = document.querySelector('.status-btn.active').getAttribute('data-status');
 
             const newBooking = {
                 checkIn: document.getElementById('adminCheckIn').value,
@@ -416,7 +404,7 @@
                 cottage: document.getElementById('adminCottage').value,
                 name: document.getElementById('adminName').value + ' (Ручна бронь)',
                 phone: document.getElementById('adminPhone').value,
-                status: 'Підтверджено'
+                status: activeStatus // Відправляємо обраний статус!
             };
 
             try {
@@ -444,6 +432,13 @@
                 if (filter === "Всі броні") renderTable(allBookings);
                 else if (filter === "Майбутні") renderTable(allBookings.filter(b => !b.status.includes('Скасовано')));
                 else if (filter === "Скасовані") renderTable(allBookings.filter(b => b.status.includes('Скасовано')));
+            });
+        });
+
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
             });
         });
 
