@@ -282,11 +282,12 @@
         
         let allBookings = [];
         let editingRowNumber = null;
+
         // Розумне форматування телефону
         function formatPhone(phoneStr) {
             let clean = String(phoneStr || '').replace(/\D/g, '');
-            if (clean.length === 9) clean = '380' + clean; // Якщо 960262838 -> 380960262838
-            if (clean.length === 10 && clean.startsWith('0')) clean = '38' + clean; // Якщо 096... -> 38096...
+            if (clean.length === 9) clean = '380' + clean; 
+            if (clean.length === 10 && clean.startsWith('0')) clean = '38' + clean; 
             return clean; 
         }
         
@@ -336,14 +337,13 @@
             } catch (error) { console.error("Помилка:", error); }
         }
 
-        // --- БАЗА ГОСТЕЙ (ВИПРАВЛЕНО) ---
+        // --- БАЗА ГОСТЕЙ (ІДЕАЛЬНО ЧИСТА) ---
         function renderGuests(searchTerm = "") {
             const tbody = document.getElementById('guestsTableBody');
             tbody.innerHTML = '';
 
             const guestsMap = {};
             allBookings.forEach(b => {
-                // ВИПРАВЛЕННЯ: надійне перетворення в текст, щоб уникнути збоїв
                 const phone = String(b.phone || "").trim();
                 const name = String(b.name || "").replace(' (Ручна бронь)', '').trim();
                 
@@ -377,17 +377,9 @@
             guests.forEach(g => {
                 const dateStr = g.lastVisit.getFullYear() > 2000 ? g.lastVisit.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Немає заїздів';
                 
-                // Додаємо цей блок перед tbody.innerHTML
-                const cleanPhone = formatPhone(b.phone);
+                // Використовуємо новий форматувальник
+                const cleanPhone = formatPhone(g.phone);
                 const displayPhone = cleanPhone ? '+' + cleanPhone : '';
-
-                tbody.innerHTML += `<tr>
-                    <td><strong>${dateStr}</strong><br><span style="color: #6B7280; font-size: 12px;">${nights} ночей</span></td>
-                    <td><strong>${String(b.name).replace(' (Ручна бронь)', '')}</strong><br><span style="color: #6B7280; font-size: 12px;">${displayPhone}</span></td>
-                    <td>${b.cottage}</td>
-                    <td><span class="badge ${badgeClass}">${b.status}</span></td>
-                    <td><button class="btn-action arrow" onclick="openDetails(${index})">Деталі <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg></button></td>
-                </tr>`;
 
                 tbody.innerHTML += `
                     <tr>
@@ -423,9 +415,12 @@
                 if(String(b.status).includes('Підтверджено') || String(b.status).includes('Заїхав')) badgeClass = 'confirmed';
                 if(String(b.status).includes('Скасовано')) badgeClass = 'cancelled';
 
+                const cleanPhone = formatPhone(b.phone);
+                const displayPhone = cleanPhone ? '+' + cleanPhone : '';
+
                 tbody.innerHTML += `<tr>
                     <td><strong>${dateStr}</strong><br><span style="color: #6B7280; font-size: 12px;">${nights} ночей</span></td>
-                    <td><strong>${String(b.name).replace(' (Ручна бронь)', '')}</strong><br><span style="color: #6B7280; font-size: 12px;">${b.phone}</span></td>
+                    <td><strong>${String(b.name).replace(' (Ручна бронь)', '')}</strong><br><span style="color: #6B7280; font-size: 12px;">${displayPhone}</span></td>
                     <td>${b.cottage}</td>
                     <td><span class="badge ${badgeClass}">${b.status}</span></td>
                     <td><button class="btn-action arrow" onclick="openDetails(${index})">Деталі <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg></button></td>
@@ -433,7 +428,7 @@
             });
         }
 
-        // --- ШАХМАТКА (ВИПРАВЛЕНО ПРИВ'ЯЗКУ НОМЕРІВ) ---
+        // --- ШАХМАТКА ---
         function renderTimeline() {
             const monthsContainer = document.getElementById('timelineMonths');
             const datesContainer = document.getElementById('timelineDates');
@@ -484,7 +479,6 @@
                     let cottageStr = String(b.cottage || '');
                     let matchesRoom = (cottageStr === room.id);
                     
-                    // Хак для старих тестових даних: щоб вони не зникали
                     if (!matchesRoom) {
                         if (room.id === "Номер 3" && cottageStr.includes("Люкс")) matchesRoom = true;
                         if (room.id === "Номер 2" && cottageStr.includes("Сімейний")) matchesRoom = true;
@@ -535,10 +529,10 @@
             editingRowNumber = booking.row; 
             document.getElementById('drawerTitle').innerText = `Деталі броні`;
             document.getElementById('adminName').value = String(booking.name).replace(' (Ручна бронь)', ''); 
+            
             const cleanPhone = formatPhone(booking.phone);
             document.getElementById('adminPhone').value = cleanPhone ? '+' + cleanPhone : '';
             
-            // ВИПРАВЛЕНО: Розумний підбір котеджу, щоб він не злітав на "Номер 1"
             const selectElement = document.getElementById('adminCottage'); 
             let cottageStr = String(booking.cottage || '');
             let matchFound = Array.from(selectElement.options).some(opt => opt.value === cottageStr);
