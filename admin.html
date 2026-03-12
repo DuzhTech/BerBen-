@@ -54,6 +54,13 @@
         .btn-action svg { width: 14px; height: 14px; stroke-width: 2.5; transition: transform 0.2s; }
         .btn-action:hover svg { transform: translateX(3px); }
 
+        /* --- ПАНЕЛЬ НАВІГАЦІЇ ШАХМАТКИ (НОВЕ) --- */
+        .timeline-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .timeline-nav { display: flex; align-items: center; gap: 10px; background: white; padding: 6px 12px; border-radius: 12px; border: 1px solid #E5E7EB; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02); }
+        .btn-icon { background: #F9FAFB; border: 1px solid #E5E7EB; cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: 0.2s; color: #4B5563; display: flex; align-items: center; justify-content: center;}
+        .btn-icon:hover { background: #F3F4F6; color: #111827; border-color: #D1D5DB; }
+        .timeline-month-label { font-weight: 700; font-size: 14px; min-width: 140px; text-align: center; text-transform: capitalize; color: #111827;}
+
         /* --- ШАХМАТКА (TIMELINE GRID) --- */
         .timeline-wrapper { display: flex; border: 1px solid #E5E7EB; border-radius: 16px; overflow: hidden; background: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); align-items: flex-start;}
         .timeline-sidebar { width: 220px; flex-shrink: 0; border-right: 1px solid #E5E7EB; background: #F9FAFB; display: flex; flex-direction: column; z-index: 10; }
@@ -62,13 +69,10 @@
         .timeline-room span { font-size: 12px; font-weight: 400; color: #6B7280; margin-top: 4px; }
         
         .timeline-grid-container { flex: 1; overflow-x: auto; position: relative; display: flex; flex-direction: column; }
-        .timeline-header-top { display: flex; width: max-content; }
         
-        /* МІСЯЦІ ЗВЕРХУ */
         .timeline-months { display: flex; height: 30px; background: #F9FAFB; border-bottom: 1px solid #E5E7EB; width: max-content;}
         .timeline-month-cell { display: flex; align-items: center; justify-content: flex-start; padding-left: 15px; font-size: 12px; font-weight: 700; color: #4B5563; border-right: 1px solid #E5E7EB; text-transform: uppercase; letter-spacing: 0.5px;}
         
-        /* ДНІ */
         .timeline-dates { display: flex; height: 60px; border-bottom: 1px solid #E5E7EB; background: white; width: max-content; }
         .timeline-date { width: 60px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid #F3F4F6; font-size: 14px; font-weight: 600; }
         .timeline-date span { font-size: 11px; font-weight: 500; color: #9CA3AF; text-transform: uppercase; }
@@ -81,13 +85,11 @@
         .timeline-cell { width: 60px; flex-shrink: 0; border-right: 1px solid #F3F4F6; }
         .timeline-cell.weekend { background: #F9FAFB; }
 
-        /* БЛОК БРОНЮВАННЯ НА ШАХМАТЦІ */
         .booking-block {
             position: absolute; height: 50px; top: 10px; border-radius: 8px; padding: 6px 12px; 
             font-size: 13px; font-weight: 600; color: white; display: flex; flex-direction: column; 
             justify-content: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-            cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2);
         }
         .booking-block:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); z-index: 20;}
         .booking-block.status-new { background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%); }
@@ -95,7 +97,7 @@
         .booking-block.status-cancelled { background: #F3F4F6; color: #9CA3AF; border: 1px dashed #D1D5DB; text-decoration: line-through; box-shadow: none; }
         .booking-block span { font-size: 11px; font-weight: 400; opacity: 0.9; margin-top: 2px;}
 
-        /* ВИЇЗНА ПАНЕЛЬ (DRAWER) - ПОВНА ПРЕМІУМ ВЕРСІЯ */
+        /* ВИЇЗНА ПАНЕЛЬ (DRAWER) */
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17,24,39,0.4); backdrop-filter: blur(4px); z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; }
         .drawer-overlay.active { opacity: 1; pointer-events: all; }
         .drawer { position: absolute; top: 0; right: -600px; width: 550px; height: 100vh; background: #FFF; box-shadow: -10px 0 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: 0.4s; }
@@ -115,7 +117,6 @@
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { background: #FFF; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
         .form-group select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; background-size: 16px; padding-right: 40px; cursor: pointer; }
         
-        /* ПРЕМІУМ СТАТУСИ (З КРАПКАМИ ЗАМІСТЬ ЕМОДЗІ) */
         .status-toggle { display: flex; background: #F3F4F6; padding: 4px; border-radius: 12px; margin-bottom: 24px; }
         .status-btn { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 600; color: #6B7280; cursor: pointer; border-radius: 8px; transition: 0.2s; user-select: none; display: flex; align-items: center; justify-content: center; gap: 6px;}
         .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #D1D5DB; }
@@ -168,15 +169,27 @@
             </table>
         </div>
 
-        <div id="view-grid" class="timeline-wrapper" style="display: none;">
-            <div class="timeline-sidebar">
-                <div class="timeline-sidebar-header">Номери</div>
-                <div id="timelineRooms"></div>
+        <div id="view-grid" style="display: none; flex-direction: column; height: 100%;">
+            
+            <div class="timeline-toolbar">
+                <div class="timeline-nav">
+                    <button class="btn-icon" onclick="shiftTimeline(-1)"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                    <span class="timeline-month-label" id="timelineMonthLabel">Березень 2026</span>
+                    <button class="btn-icon" onclick="shiftTimeline(1)"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+                </div>
+                <button class="btn-secondary" onclick="resetTimelineToToday()" style="padding: 8px 16px; font-size: 13px;">Сьогодні</button>
             </div>
-            <div class="timeline-grid-container" id="timelineScroll">
-                <div class="timeline-months" id="timelineMonths"></div>
-                <div class="timeline-dates" id="timelineDates"></div>
-                <div class="timeline-rows" id="timelineGrid"></div>
+
+            <div class="timeline-wrapper">
+                <div class="timeline-sidebar">
+                    <div class="timeline-sidebar-header">Номери</div>
+                    <div id="timelineRooms"></div>
+                </div>
+                <div class="timeline-grid-container" id="timelineScroll">
+                    <div class="timeline-months" id="timelineMonths"></div>
+                    <div class="timeline-dates" id="timelineDates"></div>
+                    <div class="timeline-rows" id="timelineGrid"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -277,7 +290,6 @@
         let allBookings = [];
         let editingRowNumber = null;
         
-        // ОНОВЛЕНИЙ МАСИВ НОМЕРІВ
         const roomsList = [
             { id: "Номер 1", short: "Номер 1", desc: "Двомісний" },
             { id: "Номер 2", short: "Номер 2", desc: "Сімейний" },
@@ -285,7 +297,21 @@
             { id: "Номер 4", short: "Номер 4", desc: "Стандарт" }
         ];
 
-        // --- SPA НАВІГАЦІЯ ---
+        // --- ЛОГІКА НАВІГАЦІЇ ШАХМАТКИ ПО МІСЯЦЯХ ---
+        let timelineBaseDate = new Date();
+        timelineBaseDate.setDate(timelineBaseDate.getDate() - 3); // За замовчуванням: 3 дні тому
+
+        function shiftTimeline(months) {
+            timelineBaseDate.setMonth(timelineBaseDate.getMonth() + months);
+            renderTimeline();
+        }
+
+        function resetTimelineToToday() {
+            timelineBaseDate = new Date();
+            timelineBaseDate.setDate(timelineBaseDate.getDate() - 3);
+            renderTimeline();
+        }
+
         function switchView(viewName) {
             document.getElementById('menu-list').classList.remove('active');
             document.getElementById('menu-grid').classList.remove('active');
@@ -297,13 +323,12 @@
                 document.getElementById('pageTitle').innerText = 'Бронювання';
             } else {
                 document.getElementById('view-list').style.display = 'none';
-                document.getElementById('view-grid').style.display = 'flex';
+                document.getElementById('view-grid').style.display = 'flex'; // ТЕПЕР FLEX, щоб тулбар був зверху
                 document.getElementById('pageTitle').innerText = 'Шахматка';
                 renderTimeline();
             }
         }
 
-        // --- ЗАВАНТАЖЕННЯ ---
         async function loadBookings() {
             try {
                 const response = await fetch(API_URL);
@@ -337,7 +362,6 @@
             });
         }
 
-        // --- ШАХМАТКА (ОНОВЛЕНА) ---
         function renderTimeline() {
             const monthsContainer = document.getElementById('timelineMonths');
             const datesContainer = document.getElementById('timelineDates');
@@ -346,13 +370,18 @@
             
             monthsContainer.innerHTML = ''; datesContainer.innerHTML = ''; gridContainer.innerHTML = ''; roomsContainer.innerHTML = '';
 
-            const startDate = new Date(); startDate.setDate(startDate.getDate() - 3);
-            const daysCount = 35; 
+            // Використовуємо нашу змінну бази для старту
+            const startDate = new Date(timelineBaseDate);
+            const daysCount = 35; // Показуємо рівно 5 тижнів
             const cellWidth = 60; 
             const daysArr = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
             const today = new Date();
 
-            // ЛОГІКА МІСЯЦІВ
+            // ОНОВЛЮЄМО НАПИС МІСЯЦЯ В ТУЛБАРІ (беремо дату +10 днів, щоб вона була по центру екрану)
+            const labelDate = new Date(startDate);
+            labelDate.setDate(labelDate.getDate() + 10);
+            document.getElementById('timelineMonthLabel').innerText = labelDate.toLocaleString('uk-UA', { month: 'long', year: 'numeric' });
+
             let currentMonth = startDate.getMonth();
             let monthName = startDate.toLocaleString('uk-UA', { month: 'long', year: 'numeric' });
             let daysInCurrentMonth = 0;
@@ -360,7 +389,6 @@
             for (let i = 0; i < daysCount; i++) {
                 const d = new Date(startDate); d.setDate(startDate.getDate() + i);
                 
-                // Рахуємо ширину місяця
                 if (d.getMonth() !== currentMonth) {
                     monthsContainer.innerHTML += `<div class="timeline-month-cell" style="width: ${daysInCurrentMonth * cellWidth}px">${monthName}</div>`;
                     currentMonth = d.getMonth();
@@ -368,15 +396,12 @@
                     daysInCurrentMonth = 1;
                 } else { daysInCurrentMonth++; }
                 
-                // Малюємо дні
                 const isToday = d.toDateString() === today.toDateString();
                 const isWeekend = d.getDay() === 0 || d.getDay() === 6;
                 datesContainer.innerHTML += `<div class="timeline-date ${isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''}">${d.getDate()} <span>${daysArr[d.getDay()]}</span></div>`;
             }
-            // Додаємо останній місяць
             monthsContainer.innerHTML += `<div class="timeline-month-cell" style="width: ${daysInCurrentMonth * cellWidth}px">${monthName}</div>`;
 
-            // СІТКА НОМЕРІВ
             roomsList.forEach((room, roomIndex) => {
                 roomsContainer.innerHTML += `<div class="timeline-room">${room.short}<span>${room.desc}</span></div>`;
 
@@ -392,11 +417,9 @@
                 const currentRow = document.getElementById(`grid-row-${roomIndex}`);
                 
                 allBookings.forEach((b, bookingIndex) => {
-                    // ТУТ ВАЖЛИВО: перевіряємо чи назва в базі збігається з id кімнати (або хоча б частково, бо ми змінили назви)
-                    // Для сумісності зі старими даними (JUNIOR 1 -> Номер 1) я роблю гнучку перевірку
                     let matchesRoom = false;
                     if (b.cottage === room.id) matchesRoom = true;
-                    // Хак для відображення твоїх старих тестових броней на нових кімнатах
+                    // Хак для відображення старих тестових броней
                     if (room.id === "Номер 1" && b.cottage.includes("Люкс")) matchesRoom = true;
                     if (room.id === "Номер 2" && b.cottage.includes("Сімейний")) matchesRoom = true;
 
@@ -408,13 +431,29 @@
                         const offsetDays = Math.round((inDate - timelineStart) / (1000 * 60 * 60 * 24));
                         const durationDays = Math.round((outDate - inDate) / (1000 * 60 * 60 * 24));
                         
+                        // Якщо бронь перетинається з нашим вікном (35 днів)
                         if (offsetDays + durationDays > 0 && offsetDays < daysCount) {
                             let statusClass = 'status-new';
                             if (b.status.includes('Підтверджено') || b.status.includes('Заїхав')) statusClass = 'status-confirmed';
                             if (b.status.includes('Скасовано')) statusClass = 'status-cancelled';
 
+                            // Захист від того, щоб блок не виліз за лівий край екрану
+                            let blockLeft = offsetDays * cellWidth;
+                            let blockWidth = durationDays * cellWidth;
+                            let paddingLeft = 12;
+                            
+                            if (offsetDays < 0) {
+                                blockWidth = (durationDays + offsetDays) * cellWidth;
+                                blockLeft = 0;
+                                paddingLeft = 4; // зменшуємо відступ, якщо обрізано
+                            }
+                            // Якщо вилазить за правий край
+                            if (offsetDays + durationDays > daysCount) {
+                                blockWidth = (daysCount - offsetDays) * cellWidth;
+                            }
+
                             currentRow.innerHTML += `
-                                <div class="booking-block ${statusClass}" style="left: ${offsetDays * cellWidth}px; width: ${durationDays * cellWidth}px;" onclick="openDetails(${bookingIndex})">
+                                <div class="booking-block ${statusClass}" style="left: ${blockLeft}px; width: ${blockWidth}px; padding-left: ${paddingLeft}px;" onclick="openDetails(${bookingIndex})">
                                     ${b.name.replace(' (Ручна бронь)', '')} <span>${durationDays} ночей</span>
                                 </div>`;
                         }
@@ -422,10 +461,15 @@
                 });
             });
             
-            document.getElementById('timelineScroll').scrollLeft = 2 * cellWidth; 
+            // Якщо ми на поточному місяці, скролимо трохи вправо, щоб "Сьогодні" було видно
+            if(timelineBaseDate.getMonth() === (new Date()).getMonth()) {
+                document.getElementById('timelineScroll').scrollLeft = 2 * cellWidth; 
+            } else {
+                document.getElementById('timelineScroll').scrollLeft = 0; 
+            }
         }
 
-        // --- ЛОГІКА ПАНЕЛІ --- //
+        // --- ЛОГІКА ПАНЕЛІ ---
         const checkOutPicker = flatpickr("#adminCheckOut", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", minDate: "today" });
         const checkInPicker = flatpickr("#adminCheckIn", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", minDate: "today", onChange: function(selectedDates, dateStr) { checkOutPicker.set("minDate", dateStr); }});
 
