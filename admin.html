@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DuzhTech | Адмін Панель</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    
     <style>
         :root {
             --sidebar-bg: #111827;
@@ -83,17 +86,50 @@
         .drawer-body { padding: 30px; overflow-y: auto; flex: 1; }
         .drawer-footer { padding: 20px 30px; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end; gap: 12px; background: #F9FAFB; }
 
-        /* Структура форми всередині панелі */
         .form-section { border: 1px solid #E5E7EB; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
         .form-section-title { font-size: 12px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; display: block; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         
+        /* ПРЕМІУМ ПОЛЯ ВВОДУ */
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 13px; font-weight: 500; color: #4B5563; margin-bottom: 6px; }
+        
         .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 10px 14px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px; outline: none; transition: 0.2s; background: #FAFAFA;
+            width: 100%; 
+            padding: 12px 16px; /* Збільшили відступи */
+            border: 1px solid #D1D5DB; 
+            border-radius: 10px; /* Більш круглі кути */
+            font-size: 14px; 
+            color: #111827;
+            outline: none; 
+            transition: all 0.2s ease; 
+            background: #FAFAFA;
+            font-family: inherit;
         }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { background: #FFF; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { 
+            background: #FFF; 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); /* Красиве синє світіння */
+        }
+
+        /* КАСТОМНИЙ ВИПАДАЮЧИЙ СПИСОК (Select) */
+        .form-group select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+            padding-right: 40px;
+            cursor: pointer;
+        }
+
+        /* Прибираємо стрілочки у полях з цифрами (Дорослих/Дітей) */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; margin: 0; 
+        }
 
         /* Перемикач статусів */
         .status-toggle { display: flex; background: #F3F4F6; padding: 4px; border-radius: 10px; margin-bottom: 24px; }
@@ -207,11 +243,11 @@
                         <div class="form-grid">
                             <div class="form-group">
                                 <label>Дата заїзду:</label>
-                                <input type="date" id="adminCheckIn" required>
+                                <input type="text" id="adminCheckIn" placeholder="Оберіть дату..." required>
                             </div>
                             <div class="form-group">
                                 <label>Дата виїзду:</label>
-                                <input type="date" id="adminCheckOut" required>
+                                <input type="text" id="adminCheckOut" placeholder="Оберіть дату..." required>
                             </div>
                             <div class="form-group">
                                 <label>Дорослих:</label>
@@ -254,10 +290,34 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/uk.js"></script>
+
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbxWyoNdKb8pbS5P9VoxZaFMcL4ti3CJSo6YcI8LNKOXWqUKNaA8ulPECRlFIDIERL93UQ/exec";
         
         let allBookings = [];
+
+        // Ініціалізація календарів Flatpickr
+        const checkOutPicker = flatpickr("#adminCheckOut", {
+            locale: "uk",
+            dateFormat: "Y-m-d", // Для відправки в базу
+            altInput: true,
+            altFormat: "d.m.Y",  // Для красивого відображення (напр. 15.03.2026)
+            minDate: "today"
+        });
+
+        flatpickr("#adminCheckIn", {
+            locale: "uk",
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d.m.Y",
+            minDate: "today",
+            onChange: function(selectedDates, dateStr, instance) {
+                // Коли обрали заїзд, блокуємо всі дати до заїзду для виїзду!
+                checkOutPicker.set("minDate", dateStr);
+            }
+        });
 
         async function loadBookings() {
             const tbody = document.getElementById('bookingsTableBody');
