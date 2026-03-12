@@ -338,59 +338,109 @@
         }
 
         // --- БАЗА ГОСТЕЙ (ІДЕАЛЬНО ЧИСТА) ---
+        let allBookings = [];
+        let editingRowNumber = null;
+
+        // Розумне форматування телефону - прибираємо все крім цифр для посилань
+        function formatPhone(phoneStr) {
+            let clean = String(phoneStr || '').replace(/\D/g, '');
+            if (clean.length === 9) clean = '380' + clean; 
+            if (clean.length === 10 && clean.startsWith('0')) clean = '38' + clean; 
+            return clean; 
+        }
+        
+        const roomsList = [
+            { id: "Номер 1", short: "Номер 1", desc: "Двомісний" },
+            { id: "Номер 2", short: "Номер 2", desc: "Сімейний" },
+            { id: "Номер 3", short: "Номер 3", desc: "Люкс" },
+            { id: "Номер 4", short: "Номер 4", desc: "Стандарт" }
+        ];
+
+        // --- НАВІГАЦІЯ ПО МЕНЮ ---
+        let timelineBaseDate = new Date();
+        timelineBaseDate.setDate(timelineBaseDate.getDate() - 3);
+
+        function shiftTimeline(months) { timelineBaseDate.setMonth(timelineBaseDate.getMonth() + months); renderTimeline(); }
+        function resetTimelineToToday() { timelineBaseDate = new Date(); timelineBaseDate.setDate(timelineBaseDate.getDate() - 3); renderTimeline(); }
+
+        function switchView(viewName) {
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('menu-' + viewName).classList.add('active');
+
+            document.getElementById('view-list').style.display = 'none';
+            document.getElementById('view-grid').style.display = 'none';
+            document.getElementById('view-guests').style.display = 'none';
+
+            if(viewName === 'list') {
+                document.getElementById('view-list').style.display = 'block';
+                document.getElementById('pageTitle').innerText = 'Бронювання';
+                renderTable(allBookings); // Перемальовуємо "Всі", коли повертаємось
+            } else if(viewName === 'grid') {
+                document.getElementById('view-grid').style.display = 'flex';
+                document.getElementById('pageTitle').innerText = 'Шахматка';
+                renderTimeline();
+            } else if(viewName === 'guests') {
+                document.getElementById('view-guests').style.display = 'block';
+                document.getElementById('pageTitle').innerText = 'База гостей';
+                renderGuests(); 
+            }
+        }
+
+        async function loadBookings() {
+            try {
+                const response = await fetch(API_URL);
+                allBookings = await response.json();
+                renderTable(allBookings);
+                if(document.getElementById('view-grid').style.display === 'flex') renderTimeline();
+                if(document.getElementById('view-guests').style.display === 'block') renderGuests();
+            } catch (error) { console.error("Помилка:", error); }
+        }
+
         function renderGuests(searchTerm = "") {
             const tbody = document.getElementById('guestsTableBody');
             tbody.innerHTML = '';
-
             const guestsMap = {};
+
             allBookings.forEach(b => {
-                const phone = String(b.phone || "").trim();
+                const rawPhone = String(b.phone || "").trim();
+                if (!rawPhone) return;
+                const phoneKey = formatPhone(rawPhone);
                 const name = String(b.name || "").replace(' (Ручна бронь)', '').trim();
                 
-                if (!guestsMap[phone]) {
-                    guestsMap[phone] = { name: name, phone: phone, count: 0, lastVisit: new Date(0) };
+                if (!guestsMap[phoneKey]) {
+                    guestsMap[phoneKey] = { name: name, phone: phoneKey, count: 0, lastVisit: new Date(0) };
                 }
-                if (!String(b.status).includes('Скасовано')) {
-                    guestsMap[phone].count++;
+                if (!String(b.status).toLowerCase().includes('скас')) {
+                    guestsMap[phoneKey].count++;
                 }
                 const currentCheckIn = new Date(b.checkIn);
-                if (currentCheckIn > guestsMap[phone].lastVisit) {
-                    guestsMap[phone].lastVisit = currentCheckIn;
-                    if (name) guestsMap[phone].name = name; 
+                if (currentCheckIn > guestsMap[phoneKey].lastVisit) {
+                    guestsMap[phoneKey].lastVisit = currentCheckIn;
+                    if (name) guestsMap[phoneKey].name = name; 
                 }
             });
 
             let guests = Object.values(guestsMap);
-
             if (searchTerm) {
                 const term = searchTerm.toLowerCase();
                 guests = guests.filter(g => g.name.toLowerCase().includes(term) || g.phone.includes(term));
             }
-
             guests.sort((a, b) => b.lastVisit - a.lastVisit);
-
-            if (guests.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Клієнтів не знайдено.</td></tr>';
-                return;
-            }
 
             guests.forEach(g => {
                 const dateStr = g.lastVisit.getFullYear() > 2000 ? g.lastVisit.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Немає заїздів';
-                
-                // Використовуємо новий форматувальник
-                const cleanPhone = formatPhone(g.phone);
-                const displayPhone = cleanPhone ? '+' + cleanPhone : '';
+                const cleanPhone = g.phone; // Лише цифри
 
                 tbody.innerHTML += `
                     <tr>
                         <td><strong>${g.name}</strong></td>
-                        <td style="color: #4B5563;">${displayPhone}</td>
+                        <td style="color: #4B5563;">+${cleanPhone}</td>
                         <td><span class="badge new">${g.count} заїздів</span></td>
                         <td style="color: #6B7280;">${dateStr}</td>
                         <td>
                             <div style="display: flex; gap: 6px;">
                                 <a href="https://t.me/+${cleanPhone}" target="_blank" class="contact-btn tg">Telegram</a>
-                                <a href="viber://chat?number=%2B${cleanPhone}" target="_blank" class="contact-btn vb">Viber</a>
+                                <a href="https://wa.me/${cleanPhone}" target="_blank" class="contact-btn" style="background: #25D366; color: white; padding: 6px 12px; font-size: 12px; border-radius: 6px; text-decoration: none; font-weight: 600;">WhatsApp</a>
                             </div>
                         </td>
                     </tr>
@@ -400,33 +450,56 @@
 
         document.getElementById('guestSearch').addEventListener('input', (e) => renderGuests(e.target.value));
 
-        // --- ТАБЛИЦЯ БРОНЮВАНЬ ---
+        // --- ТАБЛИЦЯ БРОНЮВАНЬ (ВИПРАВЛЕНО ФІЛЬТРИ) ---
         function renderTable(data) {
             const tbody = document.getElementById('bookingsTableBody');
             tbody.innerHTML = '';
-            if (data.length === 0) return tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Пусто.</td></tr>';
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 30px; color: #9CA3AF;">Нічого не знайдено</td></tr>';
+                return;
+            }
 
             data.forEach((b, index) => {
                 const inDate = new Date(b.checkIn); const outDate = new Date(b.checkOut);
-                const nights = Math.round((outDate - inDate) / (1000 * 60 * 60 * 24));
+                const nights = Math.round((outDate - inDate) / (1000 * 60 * 60 * 24)) || 0;
                 const dateStr = `${inDate.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' })} - ${outDate.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' })}`;
                 
                 let badgeClass = 'new';
-                if(String(b.status).includes('Підтверджено') || String(b.status).includes('Заїхав')) badgeClass = 'confirmed';
-                if(String(b.status).includes('Скасовано')) badgeClass = 'cancelled';
+                let s = String(b.status).toLowerCase();
+                if(s.includes('підтвердж') || s.includes('заїхав')) badgeClass = 'confirmed';
+                if(s.includes('скас')) badgeClass = 'cancelled';
 
                 const cleanPhone = formatPhone(b.phone);
-                const displayPhone = cleanPhone ? '+' + cleanPhone : '';
 
                 tbody.innerHTML += `<tr>
                     <td><strong>${dateStr}</strong><br><span style="color: #6B7280; font-size: 12px;">${nights} ночей</span></td>
-                    <td><strong>${String(b.name).replace(' (Ручна бронь)', '')}</strong><br><span style="color: #6B7280; font-size: 12px;">${displayPhone}</span></td>
+                    <td><strong>${String(b.name).replace(' (Ручна бронь)', '')}</strong><br><span style="color: #6B7280; font-size: 12px;">+${cleanPhone}</span></td>
                     <td>${b.cottage}</td>
                     <td><span class="badge ${badgeClass}">${b.status}</span></td>
-                    <td><button class="btn-action arrow" onclick="openDetails(${index})">Деталі <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg></button></td>
+                    <td><button class="btn-action arrow" onclick="openDetailsByRow(${b.row})">Деталі <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg></button></td>
                 </tr>`;
             });
         }
+
+        // Обробка кліків по табах (Майбутні / Скасовані)
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filterType = this.innerText.toLowerCase();
+                let filtered = allBookings;
+
+                if (filterType.includes('майбутні')) {
+                    const today = new Date(); today.setHours(0,0,0,0);
+                    filtered = allBookings.filter(b => new Date(b.checkIn) >= today && !String(b.status).toLowerCase().includes('скас'));
+                } else if (filterType.includes('скасовані')) {
+                    filtered = allBookings.filter(b => String(b.status).toLowerCase().includes('скас'));
+                }
+                
+                renderTable(filtered);
+            });
+        });
 
         // --- ШАХМАТКА ---
         function renderTimeline() {
@@ -475,16 +548,9 @@
 
                 const currentRow = document.getElementById(`grid-row-${roomIndex}`);
                 
-                allBookings.forEach((b, bookingIndex) => {
+                allBookings.forEach((b) => {
                     let cottageStr = String(b.cottage || '');
-                    let matchesRoom = (cottageStr === room.id);
-                    
-                    if (!matchesRoom) {
-                        if (room.id === "Номер 3" && cottageStr.includes("Люкс")) matchesRoom = true;
-                        if (room.id === "Номер 2" && cottageStr.includes("Сімейний")) matchesRoom = true;
-                    }
-
-                    if (matchesRoom) {
+                    if (cottageStr === room.id || (room.id === "Номер 3" && cottageStr.includes("Люкс")) || (room.id === "Номер 2" && cottageStr.includes("Сімейний"))) {
                         const inDate = new Date(b.checkIn); const outDate = new Date(b.checkOut);
                         inDate.setHours(0,0,0,0); outDate.setHours(0,0,0,0);
                         const timelineStart = new Date(startDate); timelineStart.setHours(0,0,0,0);
@@ -494,74 +560,75 @@
                         
                         if (offsetDays + durationDays > 0 && offsetDays < daysCount) {
                             let statusClass = 'status-new';
-                            if (String(b.status).includes('Підтверджено') || String(b.status).includes('Заїхав')) statusClass = 'status-confirmed';
-                            if (String(b.status).includes('Скасовано')) statusClass = 'status-cancelled';
+                            let s = String(b.status).toLowerCase();
+                            if (s.includes('підтвердж') || s.includes('заїхав')) statusClass = 'status-confirmed';
+                            if (s.includes('скас')) statusClass = 'status-cancelled';
 
                             let blockLeft = offsetDays * cellWidth; let blockWidth = durationDays * cellWidth; let paddingLeft = 12;
                             if (offsetDays < 0) { blockWidth = (durationDays + offsetDays) * cellWidth; blockLeft = 0; paddingLeft = 4; }
                             if (offsetDays + durationDays > daysCount) blockWidth = (daysCount - offsetDays) * cellWidth;
 
-                            currentRow.innerHTML += `<div class="booking-block ${statusClass}" style="left: ${blockLeft}px; width: ${blockWidth}px; padding-left: ${paddingLeft}px;" onclick="openDetails(${bookingIndex})">${String(b.name).replace(' (Ручна бронь)', '')} <span>${durationDays} ночей</span></div>`;
+                            currentRow.innerHTML += `<div class="booking-block ${statusClass}" style="left: ${blockLeft}px; width: ${blockWidth}px; padding-left: ${paddingLeft}px;" onclick="openDetailsByRow(${b.row})">${String(b.name).replace(' (Ручна бронь)', '')} <span>${durationDays} ночей</span></div>`;
                         }
                     }
                 });
             });
-            
             if(timelineBaseDate.getMonth() === (new Date()).getMonth()) document.getElementById('timelineScroll').scrollLeft = 2 * cellWidth; 
-            else document.getElementById('timelineScroll').scrollLeft = 0; 
         }
 
-        // --- ЛОГІКА ПАНЕЛІ ДЕТАЛЕЙ ---
-        const checkOutPicker = flatpickr("#adminCheckOut", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", minDate: "today" });
-        const checkInPicker = flatpickr("#adminCheckIn", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", minDate: "today", onChange: function(selectedDates, dateStr) { checkOutPicker.set("minDate", dateStr); }});
+        // --- ПАНЕЛЬ ДЕТАЛЕЙ ---
+        const checkOutPicker = flatpickr("#adminCheckOut", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y" });
+        const checkInPicker = flatpickr("#adminCheckIn", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", onChange: function(s, d) { checkOutPicker.set("minDate", d); }});
 
-        const statusButtons = document.querySelectorAll('.status-btn');
-        statusButtons.forEach(btn => { btn.addEventListener('click', function() { statusButtons.forEach(b => b.classList.remove('active')); this.classList.add('active'); }); });
+        document.querySelectorAll('.status-btn').forEach(btn => { 
+            btn.addEventListener('click', function() { 
+                document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active')); 
+                this.classList.add('active'); 
+            }); 
+        });
 
         function openNewBookingDrawer() {
             editingRowNumber = null; document.getElementById('drawerTitle').innerText = 'Нове бронювання'; document.getElementById('adminBookingForm').reset();
-            checkInPicker.clear(); checkOutPicker.clear(); statusButtons.forEach(b => b.classList.remove('active'));
-            document.querySelector('.status-btn[data-status="Нова бронь"]').classList.add('active'); document.getElementById('bookingDrawer').classList.add('active');
+            checkInPicker.clear(); checkOutPicker.clear(); 
+            document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.status-btn[data-status="Нова бронь"]').classList.add('active');
+            document.getElementById('bookingDrawer').classList.add('active');
         }
 
-        function openDetails(index) {
-            const booking = allBookings[index]; 
-            editingRowNumber = booking.row; 
+        function openDetailsByRow(rowNumber) {
+            const booking = allBookings.find(b => b.row == rowNumber);
+            if (!booking) return;
+            editingRowNumber = rowNumber;
             document.getElementById('drawerTitle').innerText = `Деталі броні`;
             document.getElementById('adminName').value = String(booking.name).replace(' (Ручна бронь)', ''); 
-            
-            const cleanPhone = formatPhone(booking.phone);
-            document.getElementById('adminPhone').value = cleanPhone ? '+' + cleanPhone : '';
-            
-            const selectElement = document.getElementById('adminCottage'); 
-            let cottageStr = String(booking.cottage || '');
-            let matchFound = Array.from(selectElement.options).some(opt => opt.value === cottageStr);
-            
-            if (matchFound) {
-                selectElement.value = cottageStr;
-            } else {
-                if (cottageStr.includes('Люкс')) selectElement.value = "Номер 3";
-                else if (cottageStr.includes('Сімейний')) selectElement.value = "Номер 2";
-                else selectElement.value = "Номер 1"; 
-            }
-
+            document.getElementById('adminPhone').value = '+' + formatPhone(booking.phone);
+            document.getElementById('adminCottage').value = roomsList.some(r => r.id === booking.cottage) ? booking.cottage : "Номер 1";
             checkInPicker.setDate(booking.checkIn); checkOutPicker.setDate(booking.checkOut);
-            
-            statusButtons.forEach(b => b.classList.remove('active')); 
-            let matchedBtn = document.querySelector(`.status-btn[data-status="${booking.status}"]`);
-            if(matchedBtn) matchedBtn.classList.add('active'); 
-            else document.querySelector('.status-btn[data-status="Нова бронь"]').classList.add('active');
-            
+            document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+            let matched = Array.from(document.querySelectorAll('.status-btn')).find(b => b.getAttribute('data-status') === booking.status);
+            if(matched) matched.classList.add('active'); else document.querySelector('.status-btn[data-status="Нова бронь"]').classList.add('active');
             document.getElementById('bookingDrawer').classList.add('active');
         }
 
         function closeDrawer() { document.getElementById('bookingDrawer').classList.remove('active'); }
 
         document.getElementById('adminBookingForm').addEventListener('submit', async function(e) {
-            e.preventDefault(); const btn = document.getElementById('adminSubmitBtn'); const originalText = btn.innerText; btn.innerText = "Збереження..."; btn.disabled = true;
-            const bookingData = { checkIn: document.getElementById('adminCheckIn').value, checkOut: document.getElementById('adminCheckOut').value, cottage: document.getElementById('adminCottage').value, name: document.getElementById('adminName').value, phone: document.getElementById('adminPhone').value, status: document.querySelector('.status-btn.active').getAttribute('data-status') };
-            if (editingRowNumber !== null) bookingData.row = editingRowNumber; else bookingData.name += ' (Ручна бронь)';
-            try { await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(bookingData) }); closeDrawer(); loadBookings(); } catch (error) { alert("Помилка збереження!"); } finally { btn.innerText = originalText; btn.disabled = false; }
+            e.preventDefault(); 
+            const btn = document.getElementById('adminSubmitBtn'); 
+            const originalText = btn.innerText; btn.innerText = "Збереження..."; btn.disabled = true;
+            const bookingData = { 
+                checkIn: document.getElementById('adminCheckIn').value, 
+                checkOut: document.getElementById('adminCheckOut').value, 
+                cottage: document.getElementById('adminCottage').value, 
+                name: document.getElementById('adminName').value, 
+                phone: document.getElementById('adminPhone').value, 
+                status: document.querySelector('.status-btn.active').getAttribute('data-status') 
+            };
+            if (editingRowNumber !== null) bookingData.row = editingRowNumber;
+            try { 
+                await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(bookingData) }); 
+                closeDrawer(); loadBookings(); 
+            } catch (error) { alert("Помилка!"); } finally { btn.innerText = originalText; btn.disabled = false; }
         });
 
         window.onload = loadBookings;
