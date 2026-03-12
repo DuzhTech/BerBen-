@@ -142,6 +142,105 @@
             </table>
         </div>
     </div>
+<script>
+    // ТВОЄ ОНОВЛЕНЕ ПОСИЛАННЯ З GOOGLE SCRIPT СЮДИ!
+    const API_URL = "https://script.google.com/macros/s/AKfycbxWyoNdKb8pbS5P9VoxZaFMcL4ti3CJSo6YcI8LNKOXWqUKNaA8ulPECRlFIDIERL93UQ/exec";
+    
+    let allBookings = []; // Тут будемо зберігати базу
 
+    // 1. Функція завантаження даних
+    async function loadBookings() {
+        const tbody = document.getElementById('bookingsTableBody');
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Завантаження бази...</td></tr>';
+        
+        try {
+            const response = await fetch(API_URL);
+            allBookings = await response.json();
+            renderTable(allBookings); // Малюємо таблицю
+        } catch (error) {
+            console.error(error);
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: red;">Помилка завантаження. Перевір API URL.</td></tr>';
+        }
+    }
+
+    // 2. Функція малювання таблиці
+    function renderTable(data) {
+        const tbody = document.getElementById('bookingsTableBody');
+        tbody.innerHTML = ''; // Очищаємо
+
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Бронювань поки немає.</td></tr>';
+            return;
+        }
+
+        data.forEach(b => {
+            // Форматуємо дати (щоб було красиво: 13 бер. - 15 бер.)
+            const inDate = new Date(b.checkIn);
+            const outDate = new Date(b.checkOut);
+            const options = { day: 'numeric', month: 'short' };
+            const dateStr = `${inDate.toLocaleDateString('uk-UA', options)} - ${outDate.toLocaleDateString('uk-UA', options)}`;
+            
+            // Рахуємо ночі
+            const nights = Math.round((outDate - inDate) / (1000 * 60 * 60 * 24));
+
+            // Колір статусу
+            let badgeClass = 'new';
+            if(b.status.includes('Підтверджено')) badgeClass = 'confirmed';
+            if(b.status.includes('Скасовано')) badgeClass = 'cancelled';
+
+            // Створюємо рядок
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <strong>${dateStr}</strong><br>
+                    <span style="color: #6B7280; font-size: 12px;">${nights} ночей</span>
+                </td>
+                <td class="client-info">
+                    <strong>${b.name}</strong>
+                    <span>${b.phone}</span>
+                </td>
+                <td>${b.cottage}</td>
+                <td><span class="badge ${badgeClass}">${b.status}</span></td>
+                <td><button style="border:none; background:none; color:#3B82F6; cursor:pointer; font-weight:600;">Деталі</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // 3. Перемикання вкладок (Таби)
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Забираємо active у всіх, даємо натиснутому
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+
+            const filter = this.innerText; // "Всі броні", "Майбутні", "Скасовані"
+            
+            if (filter === "Всі броні") {
+                renderTable(allBookings);
+            } else if (filter === "Майбутні") {
+                // Фільтруємо ті, що не скасовані
+                const future = allBookings.filter(b => !b.status.includes('Скасовано'));
+                renderTable(future);
+            } else if (filter === "Скасовані") {
+                // Фільтруємо скасовані
+                const cancelled = allBookings.filter(b => b.status.includes('Скасовано'));
+                renderTable(cancelled);
+            }
+        });
+    });
+
+    // 4. Перемикання сайдбару (візуальне)
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // Запускаємо при завантаженні сторінки
+    window.onload = loadBookings;
+</script>
+    
 </body>
 </html>
