@@ -5,29 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DuzhTech | Адмін Панель</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     
     <style>
         :root {
-            --sidebar-bg: #111827;
-            --sidebar-hover: #1F2937;
-            --bg-color: #F3F4F6;
-            --card-bg: #FFFFFF;
-            --text-main: #111827;
-            --text-muted: #6B7280;
-            --accent: #3B82F6;
-            --accent-hover: #2563EB;
-            --success: #10B981;
-            --danger: #EF4444;
+            --sidebar-bg: #111827; --sidebar-hover: #1F2937;
+            --bg-color: #F3F4F6; --card-bg: #FFFFFF;
+            --text-main: #111827; --text-muted: #6B7280;
+            --accent: #3B82F6; --success: #10B981; --danger: #EF4444;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-
         body { display: flex; height: 100vh; background-color: var(--bg-color); color: var(--text-main); overflow: hidden; }
 
-        /* Сайдбар */
-        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; padding: 20px 0; }
+        /* САЙДБАР */
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; padding: 20px 0; z-index: 50; }
         .logo { font-size: 24px; font-weight: 700; padding: 0 24px 30px; border-bottom: 1px solid #374151; margin-bottom: 20px; letter-spacing: 1px;}
         .logo span { color: var(--accent); }
         .menu-item { padding: 12px 24px; margin: 4px 12px; border-radius: 8px; cursor: pointer; color: #D1D5DB; font-weight: 500; transition: 0.2s; display: flex; align-items: center; gap: 12px; }
@@ -36,135 +28,129 @@
         .menu-icon { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.5; opacity: 0.7; transition: 0.2s; }
         .menu-item:hover .menu-icon, .menu-item.active .menu-icon { opacity: 1; }
 
-        /* Основний контент */
-        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        /* ОСНОВНИЙ КОНТЕНТ */
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-shrink: 0;}
         .header h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.5px; }
         
-        .btn-primary { 
-            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
-            color: white; padding: 12px 24px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; 
-            cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-            display: flex; align-items: center; gap: 8px;
-        }
-        .btn-primary:hover { background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35); transform: translateY(-2px); }
-        .btn-primary:active { transform: translateY(0); }
-
-        .btn-action {
-            background: #F3F4F6; color: #374151; border: 1px solid transparent; padding: 8px 16px; border-radius: 8px;
-            font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;
-        }
-        .btn-action:hover { background: #E5E7EB; border-color: #D1D5DB; color: #111827; }
-        .btn-action svg { width: 14px; height: 14px; stroke-width: 2.5; transition: transform 0.2s; }
-        .btn-action:hover svg { transform: translateX(3px); }
-
-        .card { background-color: var(--card-bg); border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); }
-        .tabs { display: flex; gap: 20px; border-bottom: 1px solid #E5E7EB; margin-bottom: 20px; padding-bottom: 10px; }
-        .tab { color: var(--text-muted); font-weight: 500; cursor: pointer; padding-bottom: 10px; margin-bottom: -11px; transition: 0.2s;}
-        .tab:hover { color: #374151; }
-        .tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
-
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 16px; color: var(--text-muted); font-weight: 500; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #E5E7EB; }
-        td { padding: 16px; border-bottom: 1px solid #E5E7EB; font-size: 14px; color: var(--text-main); vertical-align: middle; }
-        tr:hover td { background-color: #F9FAFB; }
+        .btn-primary { background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); color: white; padding: 12px 24px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); display: flex; align-items: center; gap: 8px;}
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35); }
         
+        .card { background-color: var(--card-bg); border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        
+        /* ТАБЛИЦЯ БРОНЮВАНЬ */
+        .tabs { display: flex; gap: 20px; border-bottom: 1px solid #E5E7EB; margin-bottom: 20px; padding-bottom: 10px; }
+        .tab { color: var(--text-muted); font-weight: 500; cursor: pointer; padding-bottom: 10px; margin-bottom: -11px; }
+        .tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 16px; color: var(--text-muted); font-weight: 500; font-size: 13px; text-transform: uppercase; border-bottom: 1px solid #E5E7EB; }
+        td { padding: 16px; border-bottom: 1px solid #E5E7EB; font-size: 14px; vertical-align: middle; }
         .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; }
         .badge.new { background-color: #DBEAFE; color: #1E40AF; }
         .badge.confirmed { background-color: #D1FAE5; color: #065F46; }
         .badge.cancelled { background-color: #FEE2E2; color: #991B1B; }
+        .btn-action { background: #F3F4F6; color: #374151; border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
 
-        .client-info strong { display: block; margin-bottom: 4px; }
-        .client-info span { color: var(--text-muted); font-size: 13px; }
-
-        /* DRAWER */
-        .drawer-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(17, 24, 39, 0.4); backdrop-filter: blur(4px);
-            z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s ease;
-        }
-        .drawer-overlay.active { opacity: 1; pointer-events: all; }
+        /* --- ШАХМАТКА (TIMELINE GRID) --- */
+        .timeline-wrapper { display: flex; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; background: white; flex: 1; min-height: 400px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);}
+        .timeline-sidebar { width: 220px; flex-shrink: 0; border-right: 1px solid #E5E7EB; background: #F9FAFB; display: flex; flex-direction: column; z-index: 10; }
+        .timeline-sidebar-header { height: 60px; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; padding: 0 20px; font-weight: 600; color: #4B5563; font-size: 13px; text-transform: uppercase; }
+        .timeline-room { height: 70px; border-bottom: 1px solid #E5E7EB; display: flex; flex-direction: column; justify-content: center; padding: 0 20px; font-size: 13px; font-weight: 600; color: #111827; }
+        .timeline-room span { font-size: 11px; font-weight: 400; color: #6B7280; margin-top: 4px; }
         
-        .drawer {
-            position: absolute; top: 0; right: -600px; width: 550px; height: 100vh;
-            background: #FFFFFF; box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
-            display: flex; flex-direction: column; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        .timeline-grid-container { flex: 1; overflow-x: auto; position: relative; display: flex; flex-direction: column; }
+        .timeline-dates { display: flex; height: 60px; border-bottom: 1px solid #E5E7EB; background: white; width: max-content; }
+        .timeline-date { width: 60px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid #F3F4F6; font-size: 14px; font-weight: 600; }
+        .timeline-date span { font-size: 11px; font-weight: 500; color: #9CA3AF; text-transform: uppercase; }
+        .timeline-date.today { color: var(--accent); background: #EFF6FF; }
+        .timeline-date.today span { color: var(--accent); }
+        .timeline-date.weekend { background: #F9FAFB; color: #EF4444; }
+
+        .timeline-rows { position: relative; width: max-content; }
+        .timeline-row-bg { display: flex; height: 70px; border-bottom: 1px solid #F3F4F6; }
+        .timeline-cell { width: 60px; flex-shrink: 0; border-right: 1px solid #F3F4F6; }
+        .timeline-cell.weekend { background: #F9FAFB; }
+
+        /* БЛОК БРОНЮВАННЯ НА ШАХМАТЦІ */
+        .booking-block {
+            position: absolute; height: 50px; top: 10px; border-radius: 8px; padding: 6px 10px; 
+            font-size: 12px; font-weight: 600; color: white; display: flex; flex-direction: column; 
+            justify-content: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+            cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
         }
+        .booking-block:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); z-index: 20;}
+        .booking-block.status-new { background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%); }
+        .booking-block.status-confirmed { background: linear-gradient(135deg, #34D399 0%, #10B981 100%); }
+        .booking-block.status-cancelled { background: #F3F4F6; color: #9CA3AF; border: 1px dashed #D1D5DB; text-decoration: line-through; box-shadow: none; }
+        .booking-block span { font-size: 10px; font-weight: 400; opacity: 0.9; margin-top: 2px;}
+
+        /* ВИЇЗНА ПАНЕЛЬ (DRAWER) - ЗГОРНУТО ДЛЯ ЕКОНОМІЇ МІСЦЯ, АЛЕ ВСЕ ПРАЦЮЄ */
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17,24,39,0.4); backdrop-filter: blur(4px); z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .drawer-overlay.active { opacity: 1; pointer-events: all; }
+        .drawer { position: absolute; top: 0; right: -600px; width: 550px; height: 100vh; background: #FFF; box-shadow: -10px 0 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: 0.4s; }
         .drawer-overlay.active .drawer { right: 0; }
-
         .drawer-header { padding: 24px 30px; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center; background: #F9FAFB; }
-        .drawer-header h2 { font-size: 20px; font-weight: 600; margin: 0; color: var(--text-main); }
-        .close-btn { background: #E5E7EB; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; color: #4B5563; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-        .close-btn:hover { background: #D1D5DB; color: #111827; }
-
         .drawer-body { padding: 30px; overflow-y: auto; flex: 1; }
         .drawer-footer { padding: 20px 30px; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end; gap: 12px; background: #F9FAFB; }
-
         .form-section { border: 1px solid #E5E7EB; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
-        .form-section-title { font-size: 12px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; display: block; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 13px; font-weight: 500; color: #4B5563; margin-bottom: 6px; }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 12px 16px; border: 1px solid #D1D5DB; border-radius: 10px; font-size: 14px; color: #111827; outline: none; transition: all 0.2s ease; background: #FAFAFA; font-family: inherit;
-        }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { background: #FFF; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
-        .form-group select {
-            appearance: none; -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 16px center; background-size: 16px; padding-right: 40px; cursor: pointer;
-        }
-        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-
+        .form-group input, .form-group select { width: 100%; padding: 12px 16px; border: 1px solid #D1D5DB; border-radius: 10px; font-size: 14px; outline: none; background: #FAFAFA; font-family: inherit;}
+        .form-group input:focus, .form-group select:focus { background: #FFF; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
         .status-toggle { display: flex; background: #F3F4F6; padding: 4px; border-radius: 10px; margin-bottom: 24px; }
         .status-btn { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 600; color: #6B7280; cursor: pointer; border-radius: 8px; transition: 0.2s; user-select: none; }
-        /* Коли кнопка активна, вона стає білою з тіню */
         .status-btn.active { background: #FFFFFF; color: var(--text-main); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        
-        .btn-secondary { background: white; border: 1px solid #D1D5DB; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; color: #374151; transition: 0.2s;}
-        .btn-secondary:hover { background: #F9FAFB; }
+        .close-btn { background: #E5E7EB; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-secondary { background: white; border: 1px solid #D1D5DB; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
         <div class="logo">Duzh<span>Tech</span></div>
-        <div class="menu-item"><svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" /></svg>Шахматка</div>
-        <div class="menu-item active"><svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>Бронювання</div>
+        <div class="menu-item" onclick="switchView('grid')" id="menu-grid">
+            <svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" /></svg>Шахматка
+        </div>
+        <div class="menu-item active" onclick="switchView('list')" id="menu-list">
+            <svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>Бронювання
+        </div>
         <div class="menu-item"><svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>База гостей</div>
-        <div class="menu-item"><svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>Налаштування</div>
     </div>
 
     <div class="main-content">
         <div class="header">
-            <h1>Бронювання</h1>
+            <h1 id="pageTitle">Бронювання</h1>
             <button class="btn-primary" onclick="openNewBookingDrawer()">
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path></svg>
                 Створити бронь
             </button>
         </div>
 
-        <div class="card">
+        <div id="view-list" class="card">
             <div class="tabs">
                 <div class="tab active">Всі броні</div>
                 <div class="tab">Майбутні</div>
                 <div class="tab">Скасовані</div>
             </div>
-
             <table>
                 <thead>
-                    <tr>
-                        <th>Дати</th>
-                        <th>Клієнт</th>
-                        <th>Котедж</th>
-                        <th>Статус</th>
-                        <th>Дія</th>
-                    </tr>
+                    <tr><th>Дати</th><th>Клієнт</th><th>Котедж</th><th>Статус</th><th>Дія</th></tr>
                 </thead>
-                <tbody id="bookingsTableBody">
-                    </tbody>
+                <tbody id="bookingsTableBody"></tbody>
             </table>
+        </div>
+
+        <div id="view-grid" class="timeline-wrapper" style="display: none;">
+            <div class="timeline-sidebar">
+                <div class="timeline-sidebar-header">Котеджі</div>
+                <div id="timelineRooms"></div>
+            </div>
+            <div class="timeline-grid-container" id="timelineScroll">
+                <div class="timeline-dates" id="timelineDates"></div>
+                <div class="timeline-rows" id="timelineGrid"></div>
+            </div>
         </div>
     </div>
 
@@ -174,90 +160,46 @@
                 <h2 id="drawerTitle">Деталі бронювання</h2>
                 <button class="close-btn" onclick="closeDrawer()">✕</button>
             </div>
-            
             <div class="drawer-body">
-                <div class="status-toggle" id="statusContainer">
+                <div class="status-toggle">
                     <div class="status-btn active" data-status="Нова бронь">🔄 Нова</div>
                     <div class="status-btn" data-status="Підтверджено">✅ Заїхав</div>
                     <div class="status-btn" data-status="Виїхав">🚪 Виїхав</div>
                     <div class="status-btn" data-status="Скасовано" style="color: #EF4444;">❌ Скасовано</div>
                 </div>
-
                 <form id="adminBookingForm">
                     <div class="form-section">
                         <span class="form-section-title">Інформація про гостя</span>
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: span 2;">
                                 <label>Ім'я та Прізвище:</label>
-                                <input type="text" id="adminName" placeholder="Наприклад, Олена Іванова" required>
+                                <input type="text" id="adminName" required>
                             </div>
                             <div class="form-group">
                                 <label>Телефон:</label>
-                                <input type="tel" id="adminPhone" placeholder="+380..." required>
-                            </div>
-                            <div class="form-group">
-                                <label>Джерело:</label>
-                                <select>
-                                    <option>Телефон (Пряме)</option>
-                                    <option>Telegram Бот</option>
-                                    <option>Booking.com</option>
-                                </select>
+                                <input type="tel" id="adminPhone" required>
                             </div>
                         </div>
                     </div>
-
                     <div class="form-section">
                         <span class="form-section-title">Дані про заїзд</span>
                         <div class="form-group">
                             <label>Номер / Котедж:</label>
                             <select id="adminCottage">
-                                <option value="Котедж Сімейний">JUNIOR 1 (Котедж для двох)</option>
-                                <option value="Котедж Люкс">FAMILY №2 (Сімейний котедж)</option>
+                                <option value="JUNIOR 1 (Котедж для двох)">JUNIOR 1 (Котедж для двох)</option>
+                                <option value="FAMILY №2 (Сімейний котедж)">FAMILY №2 (Сімейний котедж)</option>
                             </select>
                         </div>
                         <div class="form-grid">
-                            <div class="form-group">
-                                <label>Дата заїзду:</label>
-                                <input type="text" id="adminCheckIn" placeholder="Оберіть дату..." required>
-                            </div>
-                            <div class="form-group">
-                                <label>Дата виїзду:</label>
-                                <input type="text" id="adminCheckOut" placeholder="Оберіть дату..." required>
-                            </div>
-                            <div class="form-group">
-                                <label>Дорослих:</label>
-                                <input type="number" value="2" min="1">
-                            </div>
-                            <div class="form-group">
-                                <label>Дітей:</label>
-                                <input type="number" value="0" min="0">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section" style="background: #F9FAFB; border-color: #E5E7EB;">
-                        <span class="form-section-title">Вартість бронювання</span>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #4B5563;">
-                            <span>Загальна вартість:</span>
-                            <strong>0 грн</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #4B5563;">
-                            <span>Передоплата:</span>
-                            <strong style="color: var(--success);">0 грн</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; border-top: 1px solid #D1D5DB; padding-top: 12px; font-size: 16px;">
-                            <span>До сплати:</span>
-                            <strong style="color: var(--accent);">0 грн</strong>
+                            <div class="form-group"><label>Дата заїзду:</label><input type="text" id="adminCheckIn" required></div>
+                            <div class="form-group"><label>Дата виїзду:</label><input type="text" id="adminCheckOut" required></div>
                         </div>
                     </div>
                 </form>
             </div>
-
             <div class="drawer-footer">
                 <button class="btn-secondary" onclick="closeDrawer()">Закрити</button>
-                <button type="submit" class="btn-primary" form="adminBookingForm" id="adminSubmitBtn" style="width: auto;">
-                    Зберегти бронь
-                </button>
+                <button type="submit" class="btn-primary" form="adminBookingForm" id="adminSubmitBtn">Зберегти</button>
             </div>
         </div>
     </div>
@@ -265,17 +207,173 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/uk.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/uk.js"></script>
-
     <script>
-        // ВСТАВ СЮДИ СВОЄ НОВЕ ПОСИЛАННЯ ПІСЛЯ РОЗГОРТАННЯ!
+        // ВАЖЛИВО: ВСТАВ СВОЄ ПОСИЛАННЯ З GOOGLE SCRIPT!
         const API_URL = "https://script.google.com/macros/s/AKfycbxWyoNdKb8pbS5P9VoxZaFMcL4ti3CJSo6YcI8LNKOXWqUKNaA8ulPECRlFIDIERL93UQ/exec";
         
         let allBookings = [];
-        let editingRowNumber = null; // Змінна, яка пам'ятає, який рядок ми редагуємо
+        let editingRowNumber = null;
+        
+        // Масив твоїх котеджів (для Шахматки)
+        const roomsList = [
+            { id: "JUNIOR 1 (Котедж для двох)", short: "JUNIOR 1", desc: "Котедж для двох" },
+            { id: "FAMILY №2 (Сімейний котедж)", short: "FAMILY №2", desc: "Сімейний котедж" }
+        ];
 
-        // Логіка перемикання статусів
+        // --- SPA НАВІГАЦІЯ --- //
+        function switchView(viewName) {
+            // Перемикаємо активний пункт меню
+            document.getElementById('menu-list').classList.remove('active');
+            document.getElementById('menu-grid').classList.remove('active');
+            document.getElementById('menu-' + viewName).classList.add('active');
+
+            // Перемикаємо екрани
+            if(viewName === 'list') {
+                document.getElementById('view-list').style.display = 'block';
+                document.getElementById('view-grid').style.display = 'none';
+                document.getElementById('pageTitle').innerText = 'Бронювання';
+            } else {
+                document.getElementById('view-list').style.display = 'none';
+                document.getElementById('view-grid').style.display = 'flex';
+                document.getElementById('pageTitle').innerText = 'Шахматка';
+                renderTimeline(); // Малюємо сітку при відкритті
+            }
+        }
+
+        // --- ЛОГІКА ЗАВАНТАЖЕННЯ --- //
+        async function loadBookings() {
+            try {
+                const response = await fetch(API_URL);
+                allBookings = await response.json();
+                renderTable(allBookings);
+                
+                // Якщо відкрита шахматка - оновлюємо і її
+                if(document.getElementById('view-grid').style.display === 'flex') {
+                    renderTimeline();
+                }
+            } catch (error) { console.error("Помилка:", error); }
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('bookingsTableBody');
+            tbody.innerHTML = '';
+            if (data.length === 0) return tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Пусто.</td></tr>';
+
+            data.forEach((b, index) => {
+                const inDate = new Date(b.checkIn); const outDate = new Date(b.checkOut);
+                const nights = Math.round((outDate - inDate) / (1000 * 60 * 60 * 24));
+                const dateStr = `${inDate.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' })} - ${outDate.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' })}`;
+                
+                let badgeClass = 'new';
+                if(b.status.includes('Підтверджено') || b.status.includes('Заїхав')) badgeClass = 'confirmed';
+                if(b.status.includes('Скасовано')) badgeClass = 'cancelled';
+
+                tbody.innerHTML += `<tr>
+                    <td><strong>${dateStr}</strong><br><span style="color: #6B7280; font-size: 12px;">${nights} ночей</span></td>
+                    <td><strong>${b.name.replace(' (Ручна бронь)', '')}</strong><br><span style="color: #6B7280; font-size: 12px;">${b.phone}</span></td>
+                    <td>${b.cottage}</td>
+                    <td><span class="badge ${badgeClass}">${b.status}</span></td>
+                    <td><button class="btn-action" onclick="openDetails(${index})">Деталі <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg></button></td>
+                </tr>`;
+            });
+        }
+
+        // --- МАГІЯ ШАХМАТКИ (TIMELINE) --- //
+        function renderTimeline() {
+            const datesContainer = document.getElementById('timelineDates');
+            const gridContainer = document.getElementById('timelineGrid');
+            const roomsContainer = document.getElementById('timelineRooms');
+            
+            datesContainer.innerHTML = ''; gridContainer.innerHTML = ''; roomsContainer.innerHTML = '';
+
+            // Генеруємо дати: 3 дні тому -> 30 днів вперед
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - 3);
+            const daysCount = 33; 
+            const cellWidth = 60; // ширина одного дня (px)
+            
+            const daysArr = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+            const today = new Date();
+
+            // 1. Малюємо шапку з датами
+            for (let i = 0; i < daysCount; i++) {
+                const d = new Date(startDate);
+                d.setDate(startDate.getDate() + i);
+                
+                const isToday = d.toDateString() === today.toDateString();
+                const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+                
+                datesContainer.innerHTML += `
+                    <div class="timeline-date ${isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''}">
+                        ${d.getDate()} <span>${daysArr[d.getDay()]}</span>
+                    </div>`;
+            }
+
+            // 2. Малюємо кожну кімнату і сітку днів
+            roomsList.forEach((room, roomIndex) => {
+                // Додаємо кімнату в лівий сайдбар
+                roomsContainer.innerHTML += `
+                    <div class="timeline-room">
+                        ${room.short}
+                        <span>${room.desc}</span>
+                    </div>`;
+
+                // Створюємо рядок сітки для цієї кімнати
+                let rowHtml = `<div class="timeline-row-bg" id="grid-row-${roomIndex}">`;
+                for (let i = 0; i < daysCount; i++) {
+                    const d = new Date(startDate); d.setDate(startDate.getDate() + i);
+                    const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+                    rowHtml += `<div class="timeline-cell ${isWeekend ? 'weekend' : ''}"></div>`;
+                }
+                rowHtml += `</div>`;
+                gridContainer.innerHTML += rowHtml;
+
+                // 3. Розміщуємо броні поверх сітки!
+                const currentRow = document.getElementById(`grid-row-${roomIndex}`);
+                
+                allBookings.forEach((b, bookingIndex) => {
+                    // Перевіряємо, чи бронь належить цій кімнаті
+                    if (b.cottage === room.id) {
+                        const inDate = new Date(b.checkIn);
+                        const outDate = new Date(b.checkOut);
+                        
+                        // Відкидаємо час для точної математики
+                        inDate.setHours(0,0,0,0); outDate.setHours(0,0,0,0);
+                        const timelineStart = new Date(startDate); timelineStart.setHours(0,0,0,0);
+                        
+                        // Рахуємо зсув (відступ зліва) та ширину (кількість ночей)
+                        const offsetDays = Math.round((inDate - timelineStart) / (1000 * 60 * 60 * 24));
+                        const durationDays = Math.round((outDate - inDate) / (1000 * 60 * 60 * 24));
+                        
+                        // Малюємо блок, ТІЛЬКИ якщо він потрапляє в видиму зону дат
+                        if (offsetDays + durationDays > 0 && offsetDays < daysCount) {
+                            let statusClass = 'status-new';
+                            if (b.status.includes('Підтверджено') || b.status.includes('Заїхав')) statusClass = 'status-confirmed';
+                            if (b.status.includes('Скасовано')) statusClass = 'status-cancelled';
+
+                            currentRow.innerHTML += `
+                                <div class="booking-block ${statusClass}" 
+                                     style="left: ${offsetDays * cellWidth}px; width: ${durationDays * cellWidth}px;"
+                                     onclick="openDetails(${bookingIndex})">
+                                    ${b.name.replace(' (Ручна бронь)', '')}
+                                    <span>${durationDays} ночей</span>
+                                </div>
+                            `;
+                        }
+                    }
+                });
+            });
+            
+            // Скролимо шахматку до "Сьогодні"
+            document.getElementById('timelineScroll').scrollLeft = 2 * cellWidth; 
+        }
+
+        // --- ЛОГІКА ПАНЕЛІ (DRAWER) --- //
+        const checkOutPicker = flatpickr("#adminCheckOut", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", minDate: "today" });
+        const checkInPicker = flatpickr("#adminCheckIn", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", minDate: "today",
+            onChange: function(selectedDates, dateStr) { checkOutPicker.set("minDate", dateStr); }
+        });
+
         const statusButtons = document.querySelectorAll('.status-btn');
         statusButtons.forEach(btn => {
             btn.addEventListener('click', function() {
@@ -284,95 +382,29 @@
             });
         });
 
-        // Календарі
-        const checkOutPicker = flatpickr("#adminCheckOut", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", minDate: "today" });
-        const checkInPicker = flatpickr("#adminCheckIn", {
-            locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", minDate: "today",
-            onChange: function(selectedDates, dateStr, instance) { checkOutPicker.set("minDate", dateStr); }
-        });
-
-        async function loadBookings() {
-            const tbody = document.getElementById('bookingsTableBody');
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Завантаження бази...</td></tr>';
-            try {
-                const response = await fetch(API_URL);
-                allBookings = await response.json();
-                renderTable(allBookings);
-            } catch (error) {
-                console.error(error);
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: red;">Помилка завантаження.</td></tr>';
-            }
-        }
-
-        function renderTable(data) {
-            const tbody = document.getElementById('bookingsTableBody');
-            tbody.innerHTML = '';
-
-            if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Бронювань поки немає.</td></tr>';
-                return;
-            }
-
-            data.forEach((b, index) => {
-                const inDate = new Date(b.checkIn);
-                const outDate = new Date(b.checkOut);
-                const options = { day: 'numeric', month: 'short' };
-                const dateStr = `${inDate.toLocaleDateString('uk-UA', options)} - ${outDate.toLocaleDateString('uk-UA', options)}`;
-                const nights = Math.round((outDate - inDate) / (1000 * 60 * 60 * 24));
-
-                let badgeClass = 'new';
-                if(b.status.includes('Підтверджено') || b.status.includes('Заїхав')) badgeClass = 'confirmed';
-                if(b.status.includes('Скасовано')) badgeClass = 'cancelled';
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>
-                        <strong>${dateStr}</strong><br>
-                        <span style="color: #6B7280; font-size: 12px;">${nights} ночей</span>
-                    </td>
-                    <td class="client-info">
-                        <strong>${b.name.replace(' (Ручна бронь)', '')}</strong>
-                        <span>${b.phone}</span>
-                    </td>
-                    <td>${b.cottage}</td>
-                    <td><span class="badge ${badgeClass}">${b.status}</span></td>
-                    <td>
-                        <button class="btn-action" onclick="openDetails(${index})">
-                            Деталі
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // Відкриття для НОВОЇ броні
         function openNewBookingDrawer() {
-            editingRowNumber = null; // Очищаємо пам'ять, щоб Гугл знав, що це нове!
-            
+            editingRowNumber = null;
             document.getElementById('drawerTitle').innerText = 'Нове бронювання';
-            document.getElementById('adminSubmitBtn').innerText = 'Зберегти бронь';
             document.getElementById('adminBookingForm').reset();
-            checkInPicker.clear();
-            checkOutPicker.clear();
-            
+            checkInPicker.clear(); checkOutPicker.clear();
             statusButtons.forEach(b => b.classList.remove('active'));
             document.querySelector('.status-btn[data-status="Нова бронь"]').classList.add('active');
-
             document.getElementById('bookingDrawer').classList.add('active');
         }
 
-        // Відкриття ДЕТАЛЕЙ існуючої броні
         function openDetails(index) {
             const booking = allBookings[index];
-            editingRowNumber = booking.row; // ЗАПАМ'ЯТОВУЄМО РЯДОК!
-            
-            document.getElementById('drawerTitle').innerText = `Деталі броні: ${booking.name.replace(' (Ручна бронь)', '')}`;
-            document.getElementById('adminSubmitBtn').innerText = 'Оновити бронь';
-            
+            editingRowNumber = booking.row;
+            document.getElementById('drawerTitle').innerText = `Деталі броні`;
             document.getElementById('adminName').value = booking.name.replace(' (Ручна бронь)', '');
             document.getElementById('adminPhone').value = booking.phone;
+            
+            // Встановлюємо правильний котедж у випадаючому списку
+            const selectElement = document.getElementById('adminCottage');
+            selectElement.value = booking.cottage;
+            // Якщо раптом назва не збігається, встановлюємо перший
+            if(selectElement.selectedIndex === -1) selectElement.selectedIndex = 0; 
+
             checkInPicker.setDate(booking.checkIn);
             checkOutPicker.setDate(booking.checkOut);
 
@@ -384,70 +416,30 @@
             document.getElementById('bookingDrawer').classList.add('active');
         }
 
-        function closeDrawer() {
-            document.getElementById('bookingDrawer').classList.remove('active');
-        }
+        function closeDrawer() { document.getElementById('bookingDrawer').classList.remove('active'); }
 
-        // Збереження (Створення або Оновлення)
         document.getElementById('adminBookingForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = document.getElementById('adminSubmitBtn');
-            const originalText = btn.innerText;
-            btn.innerText = "Збереження...";
-            btn.disabled = true;
+            const originalText = btn.innerText; btn.innerText = "Збереження..."; btn.disabled = true;
 
-            const activeStatus = document.querySelector('.status-btn.active').getAttribute('data-status');
-
-            // Формуємо пакет даних
             const bookingData = {
                 checkIn: document.getElementById('adminCheckIn').value,
                 checkOut: document.getElementById('adminCheckOut').value,
                 cottage: document.getElementById('adminCottage').value,
                 name: document.getElementById('adminName').value,
                 phone: document.getElementById('adminPhone').value,
-                status: activeStatus
+                status: document.querySelector('.status-btn.active').getAttribute('data-status')
             };
 
-            // Якщо ми редагуємо існуючу бронь — додаємо її рядок!
-            if (editingRowNumber !== null) {
-                bookingData.row = editingRowNumber;
-            } else {
-                bookingData.name += ' (Ручна бронь)';
-            }
+            if (editingRowNumber !== null) bookingData.row = editingRowNumber;
+            else bookingData.name += ' (Ручна бронь)';
 
             try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(bookingData)
-                });
-                closeDrawer();
-                loadBookings();
-            } catch (error) {
-                alert("Помилка збереження!");
-            } finally {
-                btn.innerText = originalText;
-                btn.disabled = false;
-            }
-        });
-
-        // Таби (фільтри)
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                const filter = this.innerText;
-                if (filter === "Всі броні") renderTable(allBookings);
-                else if (filter === "Майбутні") renderTable(allBookings.filter(b => !b.status.includes('Скасовано')));
-                else if (filter === "Скасовані") renderTable(allBookings.filter(b => b.status.includes('Скасовано')));
-            });
-        });
-
-        document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-            });
+                await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(bookingData) });
+                closeDrawer(); loadBookings();
+            } catch (error) { alert("Помилка збереження!"); } 
+            finally { btn.innerText = originalText; btn.disabled = false; }
         });
 
         window.onload = loadBookings;
