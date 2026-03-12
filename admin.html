@@ -902,7 +902,13 @@
                 let rowHtml = `<div class="timeline-row-bg" id="grid-row-${roomIndex}" style="position: relative;">`;
                 for (let i = 0; i < daysCount; i++) {
                     const d = new Date(startDate); d.setDate(startDate.getDate() + i);
-                    rowHtml += `<div class="timeline-cell ${d.getDay() === 0 || d.getDay() === 6 ? 'weekend' : ''}"></div>`;
+                    const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+                    
+                    // Форматуємо дату для Flatpickr (РРРР-ММ-ДД)
+                    const dateString = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                    
+                    // Додаємо onclick подію на порожню клітинку
+                    rowHtml += `<div class="timeline-cell ${isWeekend ? 'weekend' : ''}" onclick="openNewBookingDrawer('${room.name}', '${dateString}')"></div>`;
                 }
                 rowHtml += `</div>`; gridContainer.innerHTML += rowHtml;
                 const currentRow = document.getElementById(`grid-row-${roomIndex}`);
@@ -992,14 +998,36 @@
             btn.addEventListener('click', function() { document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); }); 
         });
 
-        function openNewBookingDrawer() {
-            editingRowNumber = null; document.getElementById('drawerTitle').innerText = 'Нове бронювання'; document.getElementById('adminBookingForm').reset();
-            checkInPicker.clear(); checkOutPicker.clear(); 
+        function openNewBookingDrawer(prefillRoom = null, prefillDate = null) {
+            editingRowNumber = null; 
+            document.getElementById('drawerTitle').innerText = 'Нове бронювання'; 
+            document.getElementById('adminBookingForm').reset();
+            
+            // Скидаємо статуси
             document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('.status-btn[data-status="Нова бронь"]').classList.add('active');
             
+            // Динамічно формуємо список номерів у формі
             const cottageSelect = document.getElementById('adminCottage');
             cottageSelect.innerHTML = roomsList.map(r => `<option value="${r.name}">${r.name} (${r.desc})</option>`).join('');
+
+            // Якщо ми клікнули з шахматки - підставляємо номер
+            if (prefillRoom) {
+                cottageSelect.value = prefillRoom;
+            }
+
+            // Якщо ми клікнули з шахматки - підставляємо дату
+            if (prefillDate) {
+                checkInPicker.setDate(prefillDate);
+                
+                // Автоматично ставимо дату виїзду на наступний день
+                let nextDay = new Date(prefillDate);
+                nextDay.setDate(nextDay.getDate() + 1);
+                checkOutPicker.setDate(nextDay);
+            } else {
+                checkInPicker.clear(); 
+                checkOutPicker.clear(); 
+            }
 
             document.getElementById('bookingDrawer').classList.add('active');
         }
