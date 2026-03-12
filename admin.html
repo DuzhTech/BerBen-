@@ -316,65 +316,7 @@
             if(viewName === 'list') {
                 document.getElementById('view-list').style.display = 'block';
                 document.getElementById('pageTitle').innerText = 'Бронювання';
-            } else if(viewName === 'grid') {
-                document.getElementById('view-grid').style.display = 'flex';
-                document.getElementById('pageTitle').innerText = 'Шахматка';
-                renderTimeline();
-            } else if(viewName === 'guests') {
-                document.getElementById('view-guests').style.display = 'block';
-                document.getElementById('pageTitle').innerText = 'База гостей';
-                renderGuests(); 
-            }
-        }
-
-        async function loadBookings() {
-            try {
-                const response = await fetch(API_URL);
-                allBookings = await response.json();
-                renderTable(allBookings);
-                if(document.getElementById('view-grid').style.display === 'flex') renderTimeline();
-                if(document.getElementById('view-guests').style.display === 'block') renderGuests();
-            } catch (error) { console.error("Помилка:", error); }
-        }
-
-        // --- БАЗА ГОСТЕЙ (ІДЕАЛЬНО ЧИСТА) ---
-        let allBookings = [];
-        let editingRowNumber = null;
-
-        // Розумне форматування телефону - прибираємо все крім цифр для посилань
-        function formatPhone(phoneStr) {
-            let clean = String(phoneStr || '').replace(/\D/g, '');
-            if (clean.length === 9) clean = '380' + clean; 
-            if (clean.length === 10 && clean.startsWith('0')) clean = '38' + clean; 
-            return clean; 
-        }
-        
-        const roomsList = [
-            { id: "Номер 1", short: "Номер 1", desc: "Двомісний" },
-            { id: "Номер 2", short: "Номер 2", desc: "Сімейний" },
-            { id: "Номер 3", short: "Номер 3", desc: "Люкс" },
-            { id: "Номер 4", short: "Номер 4", desc: "Стандарт" }
-        ];
-
-        // --- НАВІГАЦІЯ ПО МЕНЮ ---
-        let timelineBaseDate = new Date();
-        timelineBaseDate.setDate(timelineBaseDate.getDate() - 3);
-
-        function shiftTimeline(months) { timelineBaseDate.setMonth(timelineBaseDate.getMonth() + months); renderTimeline(); }
-        function resetTimelineToToday() { timelineBaseDate = new Date(); timelineBaseDate.setDate(timelineBaseDate.getDate() - 3); renderTimeline(); }
-
-        function switchView(viewName) {
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('menu-' + viewName).classList.add('active');
-
-            document.getElementById('view-list').style.display = 'none';
-            document.getElementById('view-grid').style.display = 'none';
-            document.getElementById('view-guests').style.display = 'none';
-
-            if(viewName === 'list') {
-                document.getElementById('view-list').style.display = 'block';
-                document.getElementById('pageTitle').innerText = 'Бронювання';
-                renderTable(allBookings); // Перемальовуємо "Всі", коли повертаємось
+                renderTable(allBookings); // Додано виклик рендеру таблиці для оновлення
             } else if(viewName === 'grid') {
                 document.getElementById('view-grid').style.display = 'flex';
                 document.getElementById('pageTitle').innerText = 'Шахматка';
