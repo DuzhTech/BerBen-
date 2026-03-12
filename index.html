@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бронювання Котеджу</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; padding: 20px; }
+        .form-container { max-width: 400px; background: white; padding: 25px; margin: 50px auto; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; margin-top: 0; }
+        label { font-weight: bold; display: block; margin-top: 15px; color: #555; }
+        input, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 12px; margin-top: 25px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; }
+        button:hover { background: #218838; }
+        button:disabled { background: #94d3a2; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Забронювати котедж</h2>
+        <form id="bookingForm">
+            <label>Дата заїзду:</label>
+            <input type="date" id="checkIn" required>
+
+            <label>Дата виїзду:</label>
+            <input type="date" id="checkOut" required>
+
+            <label>Оберіть котедж:</label>
+            <select id="cottage">
+                <option value="Котедж Сімейний">Котедж Сімейний</option>
+                <option value="Котедж Люкс">Котедж Люкс</option>
+            </select>
+
+            <label>Ваше ім'я:</label>
+            <input type="text" id="name" placeholder="Наприклад, Іван" required>
+
+            <label>Телефон:</label>
+            <input type="tel" id="phone" placeholder="+380..." required>
+
+            <button type="submit" id="submitBtn">Забронювати</button>
+        </form>
+    </div>
+
+    <script>
+        // Твоє посилання на Google Apps Script
+        const API_URL = "https://script.google.com/macros/s/AKfycbxWyoNdKb8pbS5P9VoxZaFMcL4ti3CJSo6YcI8LNKOXWqUKNaA8ulPECRlFIDIERL93UQ/exec";
+
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Зупиняємо стандартне перезавантаження сторінки
+            
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "Відправляємо...";
+            btn.disabled = true;
+
+            // Збираємо дані з форми у JSON
+            const bookingData = {
+                checkIn: document.getElementById('checkIn').value,
+                checkOut: document.getElementById('checkOut').value,
+                cottage: document.getElementById('cottage').value,
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value
+            };
+
+            // Відправляємо POST-запит у твою таблицю
+            fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    // text/plain використовується спеціально для обходу обмежень CORS в Google Scripts
+                    'Content-Type': 'text/plain;charset=utf-8' 
+                },
+                body: JSON.stringify(bookingData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert("Супер! Бронь успішно додана.");
+                document.getElementById('bookingForm').reset(); // Очищаємо форму після успіху
+                btn.innerText = "Забронювати";
+                btn.disabled = false;
+            })
+            .catch(error => {
+                console.error('Помилка:', error);
+                alert("Щось пішло не так. Перевір консоль.");
+                btn.innerText = "Забронювати";
+                btn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>
