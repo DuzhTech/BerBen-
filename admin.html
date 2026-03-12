@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuzhTech | Адмін Панель</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-bg: #111827;
+            --sidebar-hover: #1F2937;
+            --bg-color: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --accent: #3B82F6;
+            --success: #10B981;
+            --danger: #EF4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body { display: flex; height: 100vh; background-color: var(--bg-color); color: var(--text-main); }
+
+        /* Сайдбар */
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; padding: 20px 0; }
+        .logo { font-size: 24px; font-weight: 700; padding: 0 24px 30px; border-bottom: 1px solid #374151; margin-bottom: 20px; letter-spacing: 1px;}
+        .logo span { color: var(--accent); }
+        .menu-item { padding: 12px 24px; margin: 4px 12px; border-radius: 8px; cursor: pointer; color: #D1D5DB; font-weight: 500; transition: 0.2s; display: flex; align-items: center; gap: 12px; }
+        .menu-item:hover, .menu-item.active { background-color: var(--sidebar-hover); color: white; }
+        .menu-item.active { background-color: var(--accent); }
+
+        /* Основний контент */
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header h1 { font-size: 28px; font-weight: 600; }
+        .btn-primary { background-color: var(--accent); color: white; padding: 10px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-primary:hover { background-color: #2563EB; }
+
+        /* Картка і Таблиця */
+        .card { background-color: var(--card-bg); border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); }
+        
+        .tabs { display: flex; gap: 20px; border-bottom: 1px solid #E5E7EB; margin-bottom: 20px; padding-bottom: 10px; }
+        .tab { color: var(--text-muted); font-weight: 500; cursor: pointer; padding-bottom: 10px; margin-bottom: -11px; }
+        .tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 16px; color: var(--text-muted); font-weight: 500; font-size: 14px; border-bottom: 1px solid #E5E7EB; }
+        td { padding: 16px; border-bottom: 1px solid #E5E7EB; font-size: 14px; color: var(--text-main); vertical-align: middle; }
+        tr:hover td { background-color: #F9FAFB; }
+        
+        /* Статуси */
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .badge.new { background-color: #DBEAFE; color: #1E40AF; }
+        .badge.confirmed { background-color: #D1FAE5; color: #065F46; }
+        .badge.cancelled { background-color: #FEE2E2; color: #991B1B; }
+
+        .client-info strong { display: block; margin-bottom: 4px; }
+        .client-info span { color: var(--text-muted); font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">Duzh<span>Tech</span></div>
+        <div class="menu-item">📅 Шахматка</div>
+        <div class="menu-item active">📋 Броні</div>
+        <div class="menu-item">👥 Клієнти</div>
+        <div class="menu-item">⚙️ Налаштування</div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Бронювання</h1>
+            <button class="btn-primary">+ Створити бронь</button>
+        </div>
+
+        <div class="card">
+            <div class="tabs">
+                <div class="tab active">Всі броні</div>
+                <div class="tab">Майбутні</div>
+                <div class="tab">Скасовані</div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Дати</th>
+                        <th>Клієнт</th>
+                        <th>Котедж</th>
+                        <th>Статус</th>
+                        <th>Дія</th>
+                    </tr>
+                </thead>
+                <tbody id="bookingsTableBody">
+                    <tr>
+                        <td>
+                            <strong>13 бер. - 15 бер.</strong><br>
+                            <span style="color: #6B7280; font-size: 12px;">3 ночі</span>
+                        </td>
+                        <td class="client-info">
+                            <strong>Назар</strong>
+                            <span>+380960262838</span>
+                        </td>
+                        <td>Котедж Люкс</td>
+                        <td><span class="badge new">Нова</span></td>
+                        <td><button style="border:none; background:none; color:#3B82F6; cursor:pointer; font-weight:600;">Деталі</button></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>20 бер. - 25 бер.</strong><br>
+                            <span style="color: #6B7280; font-size: 12px;">5 ночей</span>
+                        </td>
+                        <td class="client-info">
+                            <strong>Олександр (Booking)</strong>
+                            <span>+380501234567</span>
+                        </td>
+                        <td>Сімейний</td>
+                        <td><span class="badge confirmed">Підтверджено</span></td>
+                        <td><button style="border:none; background:none; color:#3B82F6; cursor:pointer; font-weight:600;">Деталі</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>
