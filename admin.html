@@ -17,6 +17,7 @@
             --text-main: #111827;
             --text-muted: #6B7280;
             --accent: #3B82F6;
+            --accent-hover: #2563EB;
             --success: #10B981;
             --danger: #EF4444;
         }
@@ -38,19 +39,65 @@
         /* Основний контент */
         .main-content { flex: 1; padding: 40px; overflow-y: auto; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .header h1 { font-size: 28px; font-weight: 600; }
-        .btn-primary { background-color: var(--accent); color: white; padding: 10px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .btn-primary:hover { background-color: #2563EB; }
+        .header h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.5px; }
+        
+        /* ПРЕМІУМ КНОПКА (Створити бронь) */
+        .btn-primary { 
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            color: white; 
+            padding: 12px 24px; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 14px;
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary:hover { 
+            background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+            transform: translateY(-2px);
+        }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary svg { stroke-width: 2.5; }
+
+        /* ПРЕМІУМ КНОПКА (Деталі в таблиці) */
+        .btn-action {
+            background: #F3F4F6;
+            color: #374151;
+            border: 1px solid transparent;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-action:hover {
+            background: #E5E7EB;
+            border-color: #D1D5DB;
+            color: #111827;
+        }
+        .btn-action svg { width: 14px; height: 14px; stroke-width: 2.5; transition: transform 0.2s; }
+        .btn-action:hover svg { transform: translateX(3px); }
 
         /* Картка і Таблиця */
         .card { background-color: var(--card-bg); border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); }
         
         .tabs { display: flex; gap: 20px; border-bottom: 1px solid #E5E7EB; margin-bottom: 20px; padding-bottom: 10px; }
-        .tab { color: var(--text-muted); font-weight: 500; cursor: pointer; padding-bottom: 10px; margin-bottom: -11px; }
+        .tab { color: var(--text-muted); font-weight: 500; cursor: pointer; padding-bottom: 10px; margin-bottom: -11px; transition: 0.2s;}
+        .tab:hover { color: #374151; }
         .tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
 
         table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 16px; color: var(--text-muted); font-weight: 500; font-size: 14px; border-bottom: 1px solid #E5E7EB; }
+        th { text-align: left; padding: 16px; color: var(--text-muted); font-weight: 500; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #E5E7EB; }
         td { padding: 16px; border-bottom: 1px solid #E5E7EB; font-size: 14px; color: var(--text-main); vertical-align: middle; }
         tr:hover td { background-color: #F9FAFB; }
         
@@ -63,7 +110,7 @@
         .client-info strong { display: block; margin-bottom: 4px; }
         .client-info span { color: var(--text-muted); font-size: 13px; }
 
-        /* --- ПРЕМІУМ ВИЇЗНА ПАНЕЛЬ (DRAWER) --- */
+        /* DRAWER (Виїзна панель) */
         .drawer-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(17, 24, 39, 0.4); backdrop-filter: blur(4px);
@@ -90,48 +137,20 @@
         .form-section-title { font-size: 12px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; display: block; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         
-        /* ПРЕМІУМ ПОЛЯ ВВОДУ */
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 13px; font-weight: 500; color: #4B5563; margin-bottom: 6px; }
-        
         .form-group input, .form-group select, .form-group textarea {
-            width: 100%; 
-            padding: 12px 16px; /* Збільшили відступи */
-            border: 1px solid #D1D5DB; 
-            border-radius: 10px; /* Більш круглі кути */
-            font-size: 14px; 
-            color: #111827;
-            outline: none; 
-            transition: all 0.2s ease; 
-            background: #FAFAFA;
-            font-family: inherit;
+            width: 100%; padding: 12px 16px; border: 1px solid #D1D5DB; border-radius: 10px; font-size: 14px; color: #111827; outline: none; transition: all 0.2s ease; background: #FAFAFA; font-family: inherit;
         }
-        
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { 
-            background: #FFF; 
-            border-color: var(--accent); 
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); /* Красиве синє світіння */
-        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { background: #FFF; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
 
-        /* КАСТОМНИЙ ВИПАДАЮЧИЙ СПИСОК (Select) */
         .form-group select {
-            appearance: none;
-            -webkit-appearance: none;
+            appearance: none; -webkit-appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 16px center;
-            background-size: 16px;
-            padding-right: 40px;
-            cursor: pointer;
+            background-repeat: no-repeat; background-position: right 16px center; background-size: 16px; padding-right: 40px; cursor: pointer;
         }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
-        /* Прибираємо стрілочки у полях з цифрами (Дорослих/Дітей) */
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; margin: 0; 
-        }
-
-        /* Перемикач статусів */
         .status-toggle { display: flex; background: #F3F4F6; padding: 4px; border-radius: 10px; margin-bottom: 24px; }
         .status-btn { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 600; color: #6B7280; cursor: pointer; border-radius: 8px; transition: 0.2s; }
         .status-btn.active { background: #FFFFFF; color: var(--text-main); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -144,29 +163,19 @@
 
     <div class="sidebar">
         <div class="logo">Duzh<span>Tech</span></div>
-        
-        <div class="menu-item">
-            <svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" /></svg>
-            Шахматка
-        </div>
-        <div class="menu-item active">
-            <svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
-            Бронювання
-        </div>
-        <div class="menu-item">
-            <svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
-            База гостей
-        </div>
-        <div class="menu-item">
-            <svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
-            Налаштування
-        </div>
+        <div class="menu-item"><svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" /></svg>Шахматка</div>
+        <div class="menu-item active"><svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>Бронювання</div>
+        <div class="menu-item"><svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>База гостей</div>
+        <div class="menu-item"><svg class="menu-icon" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>Налаштування</div>
     </div>
 
     <div class="main-content">
         <div class="header">
             <h1>Бронювання</h1>
-            <button class="btn-primary">+ Створити бронь</button>
+            <button class="btn-primary" onclick="openNewBookingDrawer()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path></svg>
+                Створити бронь
+            </button>
         </div>
 
         <div class="card">
@@ -195,7 +204,7 @@
     <div id="bookingDrawer" class="drawer-overlay">
         <div class="drawer">
             <div class="drawer-header">
-                <h2>Деталі бронювання</h2>
+                <h2 id="drawerTitle">Деталі бронювання</h2>
                 <button class="close-btn" onclick="closeDrawer()">✕</button>
             </div>
             
@@ -224,7 +233,6 @@
                                 <select>
                                     <option>Телефон (Пряме)</option>
                                     <option>Telegram Бот</option>
-                                    <option>Instagram</option>
                                     <option>Booking.com</option>
                                 </select>
                             </div>
@@ -275,17 +283,14 @@
                             <strong style="color: var(--accent);">0 грн</strong>
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label>Коментар для адміністратора:</label>
-                        <textarea rows="3" placeholder="Додайте будь-який коментар..."></textarea>
-                    </div>
                 </form>
             </div>
 
             <div class="drawer-footer">
                 <button class="btn-secondary" onclick="closeDrawer()">Закрити</button>
-                <button type="submit" class="btn-primary" form="adminBookingForm" id="adminSubmitBtn">Зберегти бронь</button>
+                <button type="submit" class="btn-primary" form="adminBookingForm" id="adminSubmitBtn" style="width: auto;">
+                    Зберегти бронь
+                </button>
             </div>
         </div>
     </div>
@@ -298,38 +303,23 @@
         
         let allBookings = [];
 
-        // Ініціалізація календарів Flatpickr
-        const checkOutPicker = flatpickr("#adminCheckOut", {
-            locale: "uk",
-            dateFormat: "Y-m-d", // Для відправки в базу
-            altInput: true,
-            altFormat: "d.m.Y",  // Для красивого відображення (напр. 15.03.2026)
-            minDate: "today"
-        });
-
-        flatpickr("#adminCheckIn", {
-            locale: "uk",
-            dateFormat: "Y-m-d",
-            altInput: true,
-            altFormat: "d.m.Y",
-            minDate: "today",
-            onChange: function(selectedDates, dateStr, instance) {
-                // Коли обрали заїзд, блокуємо всі дати до заїзду для виїзду!
-                checkOutPicker.set("minDate", dateStr);
-            }
+        // Календарі
+        const checkOutPicker = flatpickr("#adminCheckOut", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", minDate: "today" });
+        const checkInPicker = flatpickr("#adminCheckIn", {
+            locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", minDate: "today",
+            onChange: function(selectedDates, dateStr, instance) { checkOutPicker.set("minDate", dateStr); }
         });
 
         async function loadBookings() {
             const tbody = document.getElementById('bookingsTableBody');
             tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Завантаження бази...</td></tr>';
-            
             try {
                 const response = await fetch(API_URL);
                 allBookings = await response.json();
                 renderTable(allBookings);
             } catch (error) {
                 console.error(error);
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: red;">Помилка завантаження. Перевір API URL.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: red;">Помилка завантаження.</td></tr>';
             }
         }
 
@@ -342,12 +332,12 @@
                 return;
             }
 
-            data.forEach(b => {
+            // Рендер таблиці з новими кнопками Деталі
+            data.forEach((b, index) => {
                 const inDate = new Date(b.checkIn);
                 const outDate = new Date(b.checkOut);
                 const options = { day: 'numeric', month: 'short' };
                 const dateStr = `${inDate.toLocaleDateString('uk-UA', options)} - ${outDate.toLocaleDateString('uk-UA', options)}`;
-                
                 const nights = Math.round((outDate - inDate) / (1000 * 60 * 60 * 24));
 
                 let badgeClass = 'new';
@@ -361,61 +351,62 @@
                         <span style="color: #6B7280; font-size: 12px;">${nights} ночей</span>
                     </td>
                     <td class="client-info">
-                        <strong>${b.name}</strong>
+                        <strong>${b.name.replace(' (Ручна бронь)', '')}</strong>
                         <span>${b.phone}</span>
                     </td>
                     <td>${b.cottage}</td>
                     <td><span class="badge ${badgeClass}">${b.status}</span></td>
-                    <td><button style="border:none; background:none; color:#3B82F6; cursor:pointer; font-weight:600;">Деталі</button></td>
+                    <td>
+                        <button class="btn-action" onclick="openDetails(${index})">
+                            Деталі
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-
-                const filter = this.innerText;
-                
-                if (filter === "Всі броні") {
-                    renderTable(allBookings);
-                } else if (filter === "Майбутні") {
-                    const future = allBookings.filter(b => !b.status.includes('Скасовано'));
-                    renderTable(future);
-                } else if (filter === "Скасовані") {
-                    const cancelled = allBookings.filter(b => b.status.includes('Скасовано'));
-                    renderTable(cancelled);
-                }
-            });
-        });
-
-        document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        window.onload = loadBookings;
-
-        // --- ЛОГІКА ВИЇЗНОЇ ПАНЕЛІ (DRAWER) --- //
+        // --- ЛОГІКА DRAWER (Панелі) ---
         const drawer = document.getElementById('bookingDrawer');
-        const addBtn = document.querySelector('.header .btn-primary');
+        const form = document.getElementById('adminBookingForm');
 
-        addBtn.addEventListener('click', () => {
+        function openNewBookingDrawer() {
+            document.getElementById('drawerTitle').innerText = 'Нове бронювання';
+            document.getElementById('adminSubmitBtn').innerText = 'Зберегти бронь';
+            form.reset();
+            checkInPicker.clear();
+            checkOutPicker.clear();
             drawer.classList.add('active');
-        });
+        }
+
+        // Відкрити панель з існуючими даними
+        function openDetails(index) {
+            const booking = allBookings[index];
+            
+            document.getElementById('drawerTitle').innerText = `Деталі броні: ${booking.name.replace(' (Ручна бронь)', '')}`;
+            document.getElementById('adminSubmitBtn').innerText = 'Оновити бронь';
+            
+            // Заповнюємо поля
+            document.getElementById('adminName').value = booking.name.replace(' (Ручна бронь)', '');
+            document.getElementById('adminPhone').value = booking.phone;
+            
+            // Встановлюємо дати в календарі Flatpickr
+            checkInPicker.setDate(booking.checkIn);
+            checkOutPicker.setDate(booking.checkOut);
+
+            drawer.classList.add('active');
+        }
 
         function closeDrawer() {
             drawer.classList.remove('active');
         }
 
-        document.getElementById('adminBookingForm').addEventListener('submit', async function(e) {
+        // Збереження
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
             const btn = document.getElementById('adminSubmitBtn');
+            const originalText = btn.innerText;
             btn.innerText = "Збереження...";
             btn.disabled = true;
 
@@ -434,19 +425,29 @@
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(newBooking)
                 });
-                
                 closeDrawer();
-                document.getElementById('adminBookingForm').reset();
                 loadBookings();
-                
-                btn.innerText = "Зберегти бронь";
-                btn.disabled = false;
             } catch (error) {
                 alert("Помилка збереження!");
-                btn.innerText = "Зберегти бронь";
+            } finally {
+                btn.innerText = originalText;
                 btn.disabled = false;
             }
         });
+
+        // Таби
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const filter = this.innerText;
+                if (filter === "Всі броні") renderTable(allBookings);
+                else if (filter === "Майбутні") renderTable(allBookings.filter(b => !b.status.includes('Скасовано')));
+                else if (filter === "Скасовані") renderTable(allBookings.filter(b => b.status.includes('Скасовано')));
+            });
+        });
+
+        window.onload = loadBookings;
     </script>
 </body>
 </html>
