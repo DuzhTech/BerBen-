@@ -480,7 +480,7 @@
 
             roomsList.forEach((room, roomIndex) => {
                 roomsContainer.innerHTML += `<div class="timeline-room">${room.short}<span>${room.desc}</span></div>`;
-                let rowHtml = `<div class="timeline-row-bg" id="grid-row-${roomIndex}">`;
+                let rowHtml = `<div class="timeline-row-bg" id="grid-row-${roomIndex}" style="position: relative;">`;
                 for (let i = 0; i < daysCount; i++) {
                     const d = new Date(startDate); d.setDate(startDate.getDate() + i);
                     rowHtml += `<div class="timeline-cell ${d.getDay() === 0 || d.getDay() === 6 ? 'weekend' : ''}"></div>`;
