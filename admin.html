@@ -265,16 +265,20 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/uk.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/uk.js"></script>
+
     <script>
+        // ВСТАВ СЮДИ СВОЄ НОВЕ ПОСИЛАННЯ ПІСЛЯ РОЗГОРТАННЯ!
         const API_URL = "https://script.google.com/macros/s/AKfycbxWyoNdKb8pbS5P9VoxZaFMcL4ti3CJSo6YcI8LNKOXWqUKNaA8ulPECRlFIDIERL93UQ/exec";
         
         let allBookings = [];
+        let editingRowNumber = null; // Змінна, яка пам'ятає, який рядок ми редагуємо
 
-        // Логіка перемикання статусів (РОБИТЬ КНОПКИ ЖИВИМИ)
+        // Логіка перемикання статусів
         const statusButtons = document.querySelectorAll('.status-btn');
         statusButtons.forEach(btn => {
             btn.addEventListener('click', function() {
-                // Забираємо active у всіх кнопок і даємо тій, на яку клікнули
                 statusButtons.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
             });
@@ -317,7 +321,7 @@
                 const nights = Math.round((outDate - inDate) / (1000 * 60 * 60 * 24));
 
                 let badgeClass = 'new';
-                if(b.status.includes('Підтверджено')) badgeClass = 'confirmed';
+                if(b.status.includes('Підтверджено') || b.status.includes('Заїхав')) badgeClass = 'confirmed';
                 if(b.status.includes('Скасовано')) badgeClass = 'cancelled';
 
                 const tr = document.createElement('tr');
@@ -345,13 +349,14 @@
 
         // Відкриття для НОВОЇ броні
         function openNewBookingDrawer() {
+            editingRowNumber = null; // Очищаємо пам'ять, щоб Гугл знав, що це нове!
+            
             document.getElementById('drawerTitle').innerText = 'Нове бронювання';
             document.getElementById('adminSubmitBtn').innerText = 'Зберегти бронь';
             document.getElementById('adminBookingForm').reset();
             checkInPicker.clear();
             checkOutPicker.clear();
             
-            // Скидаємо статус на "Нова"
             statusButtons.forEach(b => b.classList.remove('active'));
             document.querySelector('.status-btn[data-status="Нова бронь"]').classList.add('active');
 
@@ -361,6 +366,7 @@
         // Відкриття ДЕТАЛЕЙ існуючої броні
         function openDetails(index) {
             const booking = allBookings[index];
+            editingRowNumber = booking.row; // ЗАПАМ'ЯТОВУЄМО РЯДОК!
             
             document.getElementById('drawerTitle').innerText = `Деталі броні: ${booking.name.replace(' (Ручна бронь)', '')}`;
             document.getElementById('adminSubmitBtn').innerText = 'Оновити бронь';
@@ -370,15 +376,10 @@
             checkInPicker.setDate(booking.checkIn);
             checkOutPicker.setDate(booking.checkOut);
 
-            // Підсвічуємо правильну кнопку статусу
             statusButtons.forEach(b => b.classList.remove('active'));
             let matchedBtn = document.querySelector(`.status-btn[data-status="${booking.status}"]`);
-            if(matchedBtn) {
-                matchedBtn.classList.add('active');
-            } else {
-                // Якщо статус невідомий, ставимо Нова за замовчуванням
-                document.querySelector('.status-btn[data-status="Нова бронь"]').classList.add('active');
-            }
+            if(matchedBtn) matchedBtn.classList.add('active');
+            else document.querySelector('.status-btn[data-status="Нова бронь"]').classList.add('active');
 
             document.getElementById('bookingDrawer').classList.add('active');
         }
@@ -387,7 +388,7 @@
             document.getElementById('bookingDrawer').classList.remove('active');
         }
 
-        // Збереження
+        // Збереження (Створення або Оновлення)
         document.getElementById('adminBookingForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = document.getElementById('adminSubmitBtn');
@@ -395,23 +396,30 @@
             btn.innerText = "Збереження...";
             btn.disabled = true;
 
-            // Читаємо, яка кнопка статусу зараз активна
             const activeStatus = document.querySelector('.status-btn.active').getAttribute('data-status');
 
-            const newBooking = {
+            // Формуємо пакет даних
+            const bookingData = {
                 checkIn: document.getElementById('adminCheckIn').value,
                 checkOut: document.getElementById('adminCheckOut').value,
                 cottage: document.getElementById('adminCottage').value,
-                name: document.getElementById('adminName').value + ' (Ручна бронь)',
+                name: document.getElementById('adminName').value,
                 phone: document.getElementById('adminPhone').value,
-                status: activeStatus // Відправляємо обраний статус!
+                status: activeStatus
             };
+
+            // Якщо ми редагуємо існуючу бронь — додаємо її рядок!
+            if (editingRowNumber !== null) {
+                bookingData.row = editingRowNumber;
+            } else {
+                bookingData.name += ' (Ручна бронь)';
+            }
 
             try {
                 await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(newBooking)
+                    body: JSON.stringify(bookingData)
                 });
                 closeDrawer();
                 loadBookings();
@@ -423,7 +431,7 @@
             }
         });
 
-        // Таби
+        // Таби (фільтри)
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
