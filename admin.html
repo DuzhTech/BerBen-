@@ -54,12 +54,11 @@
         .btn-action svg { width: 14px; height: 14px; stroke-width: 2.5; transition: transform 0.2s; }
         .btn-action.arrow:hover svg { transform: translateX(3px); }
 
-        /* --- БАЗА ГОСТЕЙ (ПОШУК) --- */
+        /* --- БАЗА ГОСТЕЙ --- */
         .toolbar { display: flex; justify-content: space-between; margin-bottom: 20px; }
         .search-input { 
             width: 100%; max-width: 350px; padding: 10px 16px 10px 40px; 
             border: 1px solid #D1D5DB; border-radius: 10px; font-size: 14px; outline: none; transition: 0.2s; background-color: #FAFAFA;
-            /* Іконка лупи через base64 svg */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239CA3AF'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'%3E%3C/path%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: 12px center; background-size: 18px;
         }
@@ -68,7 +67,7 @@
         .contact-btn.tg { background: #28A8E9; } .contact-btn.tg:hover { background: #1f8ec7; }
         .contact-btn.vb { background: #7360F2; } .contact-btn.vb:hover { background: #5c4ad6; }
 
-        /* --- ШАХМАТКА (TIMELINE GRID) --- */
+        /* --- ШАХМАТКА --- */
         .timeline-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .timeline-nav { display: flex; align-items: center; gap: 10px; background: white; padding: 6px 12px; border-radius: 12px; border: 1px solid #E5E7EB; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02); }
         .btn-icon { background: #F9FAFB; border: 1px solid #E5E7EB; cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: 0.2s; color: #4B5563; display: flex; align-items: center; justify-content: center;}
@@ -246,8 +245,10 @@
                         <div class="form-group">
                             <label>Номер / Котедж:</label>
                             <select id="adminCottage">
-                                <option value="Номер 1">Номер 1 (Двомісний)</option><option value="Номер 2">Номер 2 (Сімейний)</option>
-                                <option value="Номер 3">Номер 3 (Люкс)</option><option value="Номер 4">Номер 4 (Стандарт)</option>
+                                <option value="Номер 1">Номер 1 (Двомісний)</option>
+                                <option value="Номер 2">Номер 2 (Сімейний)</option>
+                                <option value="Номер 3">Номер 3 (Люкс)</option>
+                                <option value="Номер 4">Номер 4 (Стандарт)</option>
                             </select>
                         </div>
                         <div class="form-grid">
@@ -289,7 +290,7 @@
             { id: "Номер 4", short: "Номер 4", desc: "Стандарт" }
         ];
 
-        // --- НАВІГАЦІЯ ---
+        // --- НАВІГАЦІЯ ПО МЕНЮ ---
         let timelineBaseDate = new Date();
         timelineBaseDate.setDate(timelineBaseDate.getDate() - 3);
 
@@ -314,7 +315,7 @@
             } else if(viewName === 'guests') {
                 document.getElementById('view-guests').style.display = 'block';
                 document.getElementById('pageTitle').innerText = 'База гостей';
-                renderGuests(); // Малюємо клієнтів
+                renderGuests(); 
             }
         }
 
@@ -328,43 +329,37 @@
             } catch (error) { console.error("Помилка:", error); }
         }
 
-        // --- БАЗА ГОСТЕЙ (НОВА ЛОГІКА) ---
+        // --- БАЗА ГОСТЕЙ (ВИПРАВЛЕНО) ---
         function renderGuests(searchTerm = "") {
             const tbody = document.getElementById('guestsTableBody');
             tbody.innerHTML = '';
 
-            // Об'єднуємо бронювання по номерах телефону, щоб знайти унікальних гостей
             const guestsMap = {};
             allBookings.forEach(b => {
-                const phone = b.phone.trim();
+                // ВИПРАВЛЕННЯ: надійне перетворення в текст, щоб уникнути збоїв
+                const phone = String(b.phone || "").trim();
+                const name = String(b.name || "").replace(' (Ручна бронь)', '').trim();
+                
                 if (!guestsMap[phone]) {
-                    guestsMap[phone] = {
-                        name: b.name.replace(' (Ручна бронь)', ''),
-                        phone: phone,
-                        count: 0,
-                        lastVisit: new Date(0)
-                    };
+                    guestsMap[phone] = { name: name, phone: phone, count: 0, lastVisit: new Date(0) };
                 }
-                // Якщо статус не "Скасовано", рахуємо в успішні заїзди
-                if (!b.status.includes('Скасовано')) {
+                if (!String(b.status).includes('Скасовано')) {
                     guestsMap[phone].count++;
                 }
                 const currentCheckIn = new Date(b.checkIn);
                 if (currentCheckIn > guestsMap[phone].lastVisit) {
                     guestsMap[phone].lastVisit = currentCheckIn;
-                    guestsMap[phone].name = b.name.replace(' (Ручна бронь)', ''); // Оновлюємо ім'я на останнє
+                    if (name) guestsMap[phone].name = name; 
                 }
             });
 
             let guests = Object.values(guestsMap);
 
-            // Фільтрація по пошуку
             if (searchTerm) {
                 const term = searchTerm.toLowerCase();
                 guests = guests.filter(g => g.name.toLowerCase().includes(term) || g.phone.includes(term));
             }
 
-            // Сортуємо від найсвіжіших
             guests.sort((a, b) => b.lastVisit - a.lastVisit);
 
             if (guests.length === 0) {
@@ -373,9 +368,8 @@
             }
 
             guests.forEach(g => {
-                // Захист від глюків з датами
                 const dateStr = g.lastVisit.getFullYear() > 2000 ? g.lastVisit.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Немає заїздів';
-                const cleanPhone = g.phone.replace(/\D/g, ''); // Залишаємо тільки цифри для посилань
+                const cleanPhone = g.phone.replace(/\D/g, ''); 
 
                 tbody.innerHTML += `
                     <tr>
@@ -394,10 +388,9 @@
             });
         }
 
-        // Пошук у реальному часі
         document.getElementById('guestSearch').addEventListener('input', (e) => renderGuests(e.target.value));
 
-        // --- РЕНДЕРИНГ ТАБЛИЦІ ---
+        // --- ТАБЛИЦЯ БРОНЮВАНЬ ---
         function renderTable(data) {
             const tbody = document.getElementById('bookingsTableBody');
             tbody.innerHTML = '';
@@ -409,12 +402,12 @@
                 const dateStr = `${inDate.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' })} - ${outDate.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' })}`;
                 
                 let badgeClass = 'new';
-                if(b.status.includes('Підтверджено') || b.status.includes('Заїхав')) badgeClass = 'confirmed';
-                if(b.status.includes('Скасовано')) badgeClass = 'cancelled';
+                if(String(b.status).includes('Підтверджено') || String(b.status).includes('Заїхав')) badgeClass = 'confirmed';
+                if(String(b.status).includes('Скасовано')) badgeClass = 'cancelled';
 
                 tbody.innerHTML += `<tr>
                     <td><strong>${dateStr}</strong><br><span style="color: #6B7280; font-size: 12px;">${nights} ночей</span></td>
-                    <td><strong>${b.name.replace(' (Ручна бронь)', '')}</strong><br><span style="color: #6B7280; font-size: 12px;">${b.phone}</span></td>
+                    <td><strong>${String(b.name).replace(' (Ручна бронь)', '')}</strong><br><span style="color: #6B7280; font-size: 12px;">${b.phone}</span></td>
                     <td>${b.cottage}</td>
                     <td><span class="badge ${badgeClass}">${b.status}</span></td>
                     <td><button class="btn-action arrow" onclick="openDetails(${index})">Деталі <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg></button></td>
@@ -422,7 +415,7 @@
             });
         }
 
-        // --- РЕНДЕРИНГ ШАХМАТКИ ---
+        // --- ШАХМАТКА (ВИПРАВЛЕНО ПРИВ'ЯЗКУ НОМЕРІВ) ---
         function renderTimeline() {
             const monthsContainer = document.getElementById('timelineMonths');
             const datesContainer = document.getElementById('timelineDates');
@@ -470,9 +463,14 @@
                 const currentRow = document.getElementById(`grid-row-${roomIndex}`);
                 
                 allBookings.forEach((b, bookingIndex) => {
-                    let matchesRoom = (b.cottage === room.id);
-                    if (room.id === "Номер 1" && b.cottage.includes("Люкс")) matchesRoom = true;
-                    if (room.id === "Номер 2" && b.cottage.includes("Сімейний")) matchesRoom = true;
+                    let cottageStr = String(b.cottage || '');
+                    let matchesRoom = (cottageStr === room.id);
+                    
+                    // Хак для старих тестових даних: щоб вони не зникали
+                    if (!matchesRoom) {
+                        if (room.id === "Номер 3" && cottageStr.includes("Люкс")) matchesRoom = true;
+                        if (room.id === "Номер 2" && cottageStr.includes("Сімейний")) matchesRoom = true;
+                    }
 
                     if (matchesRoom) {
                         const inDate = new Date(b.checkIn); const outDate = new Date(b.checkOut);
@@ -484,14 +482,14 @@
                         
                         if (offsetDays + durationDays > 0 && offsetDays < daysCount) {
                             let statusClass = 'status-new';
-                            if (b.status.includes('Підтверджено') || b.status.includes('Заїхав')) statusClass = 'status-confirmed';
-                            if (b.status.includes('Скасовано')) statusClass = 'status-cancelled';
+                            if (String(b.status).includes('Підтверджено') || String(b.status).includes('Заїхав')) statusClass = 'status-confirmed';
+                            if (String(b.status).includes('Скасовано')) statusClass = 'status-cancelled';
 
                             let blockLeft = offsetDays * cellWidth; let blockWidth = durationDays * cellWidth; let paddingLeft = 12;
                             if (offsetDays < 0) { blockWidth = (durationDays + offsetDays) * cellWidth; blockLeft = 0; paddingLeft = 4; }
                             if (offsetDays + durationDays > daysCount) blockWidth = (daysCount - offsetDays) * cellWidth;
 
-                            currentRow.innerHTML += `<div class="booking-block ${statusClass}" style="left: ${blockLeft}px; width: ${blockWidth}px; padding-left: ${paddingLeft}px;" onclick="openDetails(${bookingIndex})">${b.name.replace(' (Ручна бронь)', '')} <span>${durationDays} ночей</span></div>`;
+                            currentRow.innerHTML += `<div class="booking-block ${statusClass}" style="left: ${blockLeft}px; width: ${blockWidth}px; padding-left: ${paddingLeft}px;" onclick="openDetails(${bookingIndex})">${String(b.name).replace(' (Ручна бронь)', '')} <span>${durationDays} ночей</span></div>`;
                         }
                     }
                 });
@@ -501,7 +499,7 @@
             else document.getElementById('timelineScroll').scrollLeft = 0; 
         }
 
-        // --- ПАНЕЛЬ ТА ЗБЕРЕЖЕННЯ ---
+        // --- ЛОГІКА ПАНЕЛІ ДЕТАЛЕЙ ---
         const checkOutPicker = flatpickr("#adminCheckOut", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", minDate: "today" });
         const checkInPicker = flatpickr("#adminCheckIn", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", minDate: "today", onChange: function(selectedDates, dateStr) { checkOutPicker.set("minDate", dateStr); }});
 
@@ -515,12 +513,32 @@
         }
 
         function openDetails(index) {
-            const booking = allBookings[index]; editingRowNumber = booking.row; document.getElementById('drawerTitle').innerText = `Деталі броні`;
-            document.getElementById('adminName').value = booking.name.replace(' (Ручна бронь)', ''); document.getElementById('adminPhone').value = booking.phone;
-            const selectElement = document.getElementById('adminCottage'); selectElement.value = booking.cottage; if(selectElement.selectedIndex === -1) selectElement.selectedIndex = 0; 
+            const booking = allBookings[index]; 
+            editingRowNumber = booking.row; 
+            document.getElementById('drawerTitle').innerText = `Деталі броні`;
+            document.getElementById('adminName').value = String(booking.name).replace(' (Ручна бронь)', ''); 
+            document.getElementById('adminPhone').value = booking.phone;
+            
+            // ВИПРАВЛЕНО: Розумний підбір котеджу, щоб він не злітав на "Номер 1"
+            const selectElement = document.getElementById('adminCottage'); 
+            let cottageStr = String(booking.cottage || '');
+            let matchFound = Array.from(selectElement.options).some(opt => opt.value === cottageStr);
+            
+            if (matchFound) {
+                selectElement.value = cottageStr;
+            } else {
+                if (cottageStr.includes('Люкс')) selectElement.value = "Номер 3";
+                else if (cottageStr.includes('Сімейний')) selectElement.value = "Номер 2";
+                else selectElement.value = "Номер 1"; 
+            }
+
             checkInPicker.setDate(booking.checkIn); checkOutPicker.setDate(booking.checkOut);
-            statusButtons.forEach(b => b.classList.remove('active')); let matchedBtn = document.querySelector(`.status-btn[data-status="${booking.status}"]`);
-            if(matchedBtn) matchedBtn.classList.add('active'); else document.querySelector('.status-btn[data-status="Нова бронь"]').classList.add('active');
+            
+            statusButtons.forEach(b => b.classList.remove('active')); 
+            let matchedBtn = document.querySelector(`.status-btn[data-status="${booking.status}"]`);
+            if(matchedBtn) matchedBtn.classList.add('active'); 
+            else document.querySelector('.status-btn[data-status="Нова бронь"]').classList.add('active');
+            
             document.getElementById('bookingDrawer').classList.add('active');
         }
 
