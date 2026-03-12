@@ -92,7 +92,7 @@
         .timeline-date.weekend { background: #F9FAFB; color: #EF4444; }
 
         .timeline-rows { position: relative; width: max-content; }
-        .timeline-row-bg { display: flex; height: 70px; border-bottom: 1px solid #E5E7EB; }
+        .timeline-row-bg { display: flex; height: 70px; border-bottom: 1px solid #E5E7EB; position: relative; }
         .timeline-cell { width: 60px; flex-shrink: 0; border-right: 1px solid #F3F4F6; }
         .timeline-cell.weekend { background: #F9FAFB; }
 
@@ -492,7 +492,7 @@
                 
                 allBookings.forEach((b) => {
                     let cottageStr = String(b.cottage || '');
-                    if (cottageStr === room.id || (room.id === "Номер 3" && cottageStr.includes("Люкс")) || (room.id === "Номер 2" && cottageStr.includes("Сімейний"))) {
+                    if (cottageStr.includes(room.short) || (room.id === "Номер 3" && cottageStr.includes("Люкс")) || (room.id === "Номер 2" && cottageStr.includes("Сімейний"))) {
                         const inDate = new Date(b.checkIn); const outDate = new Date(b.checkOut);
                         inDate.setHours(0,0,0,0); outDate.setHours(0,0,0,0);
                         const timelineStart = new Date(startDate); timelineStart.setHours(0,0,0,0);
