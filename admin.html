@@ -20,7 +20,7 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
-        body { display: flex; height: 100vh; background-color: var(--bg-color); color: var(--text-main); }
+        body { display: flex; height: 100vh; background-color: var(--bg-color); color: var(--text-main); overflow: hidden; }
 
         /* Сайдбар */
         .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; padding: 20px 0; }
@@ -60,29 +60,48 @@
         .client-info strong { display: block; margin-bottom: 4px; }
         .client-info span { color: var(--text-muted); font-size: 13px; }
 
-        /* Стилі для модального вікна */
-        .modal-overlay {
+        /* --- ПРЕМІУМ ВИЇЗНА ПАНЕЛЬ (DRAWER) --- */
+        .drawer-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px);
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: 0.3s ease; z-index: 1000;
+            background: rgba(17, 24, 39, 0.4); backdrop-filter: blur(4px);
+            z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s ease;
         }
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-content {
-            background: white; width: 400px; border-radius: 16px; padding: 24px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            transform: translateY(20px); transition: 0.3s ease;
+        .drawer-overlay.active { opacity: 1; pointer-events: all; }
+        
+        .drawer {
+            position: absolute; top: 0; right: -600px; width: 550px; height: 100vh;
+            background: #FFFFFF; box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+            display: flex; flex-direction: column; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .modal-overlay.active .modal-content { transform: translateY(0); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-header h2 { font-size: 20px; font-weight: 600; margin: 0; }
-        .close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: #6B7280; }
+        .drawer-overlay.active .drawer { right: 0; }
+
+        .drawer-header { padding: 24px 30px; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center; background: #F9FAFB; }
+        .drawer-header h2 { font-size: 20px; font-weight: 600; margin: 0; color: var(--text-main); }
+        .close-btn { background: #E5E7EB; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; color: #4B5563; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .close-btn:hover { background: #D1D5DB; color: #111827; }
+
+        .drawer-body { padding: 30px; overflow-y: auto; flex: 1; }
+        .drawer-footer { padding: 20px 30px; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end; gap: 12px; background: #F9FAFB; }
+
+        /* Структура форми всередині панелі */
+        .form-section { border: 1px solid #E5E7EB; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+        .form-section-title { font-size: 12px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; display: block; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 13px; font-weight: 500; color: #4B5563; margin-bottom: 6px; }
-        .form-group input, .form-group select {
-            width: 100%; padding: 10px 12px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px; outline: none; transition: border 0.2s;
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 10px 14px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px; outline: none; transition: 0.2s; background: #FAFAFA;
         }
-        .form-group input:focus, .form-group select:focus { border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { background: #FFF; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+
+        /* Перемикач статусів */
+        .status-toggle { display: flex; background: #F3F4F6; padding: 4px; border-radius: 10px; margin-bottom: 24px; }
+        .status-btn { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 600; color: #6B7280; cursor: pointer; border-radius: 8px; transition: 0.2s; }
+        .status-btn.active { background: #FFFFFF; color: var(--text-main); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+        .btn-secondary { background: white; border: 1px solid #D1D5DB; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; color: #374151; transition: 0.2s;}
+        .btn-secondary:hover { background: #F9FAFB; }
     </style>
 </head>
 <body>
@@ -137,37 +156,101 @@
         </div>
     </div>
 
-    <div id="bookingModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Нове бронювання</h2>
-                <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="bookingDrawer" class="drawer-overlay">
+        <div class="drawer">
+            <div class="drawer-header">
+                <h2>Деталі бронювання</h2>
+                <button class="close-btn" onclick="closeDrawer()">✕</button>
             </div>
-            <form id="adminBookingForm">
-                <div class="form-group">
-                    <label>Дати (Заїзд - Виїзд):</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="date" id="adminCheckIn" required>
-                        <input type="date" id="adminCheckOut" required>
+            
+            <div class="drawer-body">
+                <div class="status-toggle">
+                    <div class="status-btn active">🔄 Нова</div>
+                    <div class="status-btn">✅ Заїхав</div>
+                    <div class="status-btn">🚪 Виїхав</div>
+                    <div class="status-btn" style="color: #EF4444;">❌ Скасовано</div>
+                </div>
+
+                <form id="adminBookingForm">
+                    <div class="form-section">
+                        <span class="form-section-title">Інформація про гостя</span>
+                        <div class="form-grid">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label>Ім'я та Прізвище:</label>
+                                <input type="text" id="adminName" placeholder="Наприклад, Олена Іванова" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Телефон:</label>
+                                <input type="tel" id="adminPhone" placeholder="+380..." required>
+                            </div>
+                            <div class="form-group">
+                                <label>Джерело:</label>
+                                <select>
+                                    <option>Телефон (Пряме)</option>
+                                    <option>Telegram Бот</option>
+                                    <option>Instagram</option>
+                                    <option>Booking.com</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label>Котедж:</label>
-                    <select id="adminCottage">
-                        <option value="Котедж Сімейний">Котедж Сімейний</option>
-                        <option value="Котедж Люкс">Котедж Люкс</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Ім'я гостя:</label>
-                    <input type="text" id="adminName" placeholder="Наприклад, Олена" required>
-                </div>
-                <div class="form-group">
-                    <label>Телефон:</label>
-                    <input type="tel" id="adminPhone" placeholder="+380..." required>
-                </div>
-                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;" id="adminSubmitBtn">Зберегти бронь</button>
-            </form>
+
+                    <div class="form-section">
+                        <span class="form-section-title">Дані про заїзд</span>
+                        <div class="form-group">
+                            <label>Номер / Котедж:</label>
+                            <select id="adminCottage">
+                                <option value="Котедж Сімейний">JUNIOR 1 (Котедж для двох)</option>
+                                <option value="Котедж Люкс">FAMILY №2 (Сімейний котедж)</option>
+                            </select>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Дата заїзду:</label>
+                                <input type="date" id="adminCheckIn" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Дата виїзду:</label>
+                                <input type="date" id="adminCheckOut" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Дорослих:</label>
+                                <input type="number" value="2" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Дітей:</label>
+                                <input type="number" value="0" min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section" style="background: #F9FAFB; border-color: #E5E7EB;">
+                        <span class="form-section-title">Вартість бронювання</span>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #4B5563;">
+                            <span>Загальна вартість:</span>
+                            <strong>0 грн</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #4B5563;">
+                            <span>Передоплата:</span>
+                            <strong style="color: var(--success);">0 грн</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-top: 1px solid #D1D5DB; padding-top: 12px; font-size: 16px;">
+                            <span>До сплати:</span>
+                            <strong style="color: var(--accent);">0 грн</strong>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Коментар для адміністратора:</label>
+                        <textarea rows="3" placeholder="Додайте будь-який коментар..."></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="drawer-footer">
+                <button class="btn-secondary" onclick="closeDrawer()">Закрити</button>
+                <button type="submit" class="btn-primary" form="adminBookingForm" id="adminSubmitBtn">Зберегти бронь</button>
+            </div>
         </div>
     </div>
 
@@ -257,17 +340,16 @@
 
         window.onload = loadBookings;
 
-        // --- ЛОГІКА МОДАЛЬНОГО ВІКНА --- //
-        const modal = document.getElementById('bookingModal');
+        // --- ЛОГІКА ВИЇЗНОЇ ПАНЕЛІ (DRAWER) --- //
+        const drawer = document.getElementById('bookingDrawer');
         const addBtn = document.querySelector('.header .btn-primary');
 
         addBtn.addEventListener('click', () => {
-            modal.classList.add('active');
+            drawer.classList.add('active');
         });
 
-        function closeModal() {
-            modal.classList.remove('active');
-            document.getElementById('adminBookingForm').reset();
+        function closeDrawer() {
+            drawer.classList.remove('active');
         }
 
         document.getElementById('adminBookingForm').addEventListener('submit', async function(e) {
@@ -293,7 +375,8 @@
                     body: JSON.stringify(newBooking)
                 });
                 
-                closeModal();
+                closeDrawer();
+                document.getElementById('adminBookingForm').reset();
                 loadBookings();
                 
                 btn.innerText = "Зберегти бронь";
