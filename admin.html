@@ -392,11 +392,7 @@
                         <div class="form-group">
                             <label>Номер / Котедж:</label>
                             <select id="adminCottage">
-                                <option value="Номер 1">Номер 1 (Двомісний)</option>
-                                <option value="Номер 2">Номер 2 (Сімейний)</option>
-                                <option value="Номер 3">Номер 3 (Люкс)</option>
-                                <option value="Номер 4">Номер 4 (Стандарт)</option>
-                            </select>
+                                </select>
                         </div>
                         <div class="form-grid">
                             <div class="form-group"><label>Дата заїзду:</label><input type="text" id="adminCheckIn" required></div>
@@ -426,12 +422,13 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/uk.js"></script>
 
     <script>
+        // ВАЖЛИВО: ВСТАВ СВОЄ ПОСИЛАННЯ З GOOGLE SCRIPT!
         const API_URL = "https://script.google.com/macros/s/AKfycbxWyoNdKb8pbS5P9VoxZaFMcL4ti3CJSo6YcI8LNKOXWqUKNaA8ulPECRlFIDIERL93UQ/exec";
         
         let allBookings = [];
         let editingRowNumber = null;
 
-        // Бази даних для налаштувань (Тепер вони живі!)
+        // --- БАЗОВІ ДАНІ НАЛАШТУВАНЬ ---
         let roomsList = [
             { id: 1, name: "Номер 1", short: "Номер 1", desc: "Двомісний", capacity: 2, priceWeekday: 4000, priceWeekend: 5000, active: true },
             { id: 2, name: "Номер 2", short: "Номер 2", desc: "Сімейний", capacity: 4, priceWeekday: 6500, priceWeekend: 7500, active: true },
@@ -452,6 +449,61 @@
             { id: 1, name: "Пізній виїзд", rooms: "Всі", price: 0, active: false },
             { id: 2, name: "Ранній заїзд", rooms: "Всі", price: 0, active: false }
         ];
+
+        // --- ІНІЦІАЛІЗАЦІЯ: ЗАВАНТАЖУЄМО БРОНІ ТА НАЛАШТУВАННЯ З ХМАРИ ---
+        async function initApp() {
+            try {
+                // Відправляємо 2 запити паралельно: за бронями і за налаштуваннями
+                const [bookingsRes, settingsRes] = await Promise.all([
+                    fetch(API_URL),
+                    fetch(API_URL + "?action=settings")
+                ]);
+                
+                allBookings = await bookingsRes.json();
+                
+                const settingsData = await settingsRes.json();
+                
+                // Якщо в хмарі вже є збережені налаштування - замінюємо базові
+                if (settingsData && Object.keys(settingsData).length > 0) {
+                    if (settingsData.roomsList) roomsList = settingsData.roomsList;
+                    if (settingsData.discountsList) discountsList = settingsData.discountsList;
+                    if (settingsData.customServicesList) customServicesList = settingsData.customServicesList;
+                    if (settingsData.sysServicesList) sysServicesList = settingsData.sysServicesList;
+                }
+
+                // Рендеримо сторінку, яка відкрита за замовчуванням
+                renderTable(allBookings);
+                
+                // Підвантажуємо дані для налаштувань, щоб вони були готові
+                renderSettingsRooms();
+                renderSettingsDiscounts();
+                renderSettingsServices();
+
+            } catch (error) { 
+                console.error("Помилка завантаження даних:", error); 
+                showToast("Помилка завантаження з бази!");
+            }
+        }
+
+        // --- ЗБЕРЕЖЕННЯ В ХМАРУ ---
+        async function saveSettingsToCloud() {
+            const settingsToSave = {
+                roomsList: roomsList,
+                discountsList: discountsList,
+                customServicesList: customServicesList,
+                sysServicesList: sysServicesList
+            };
+            
+            try {
+                await fetch(API_URL, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+                    body: JSON.stringify({ action: 'saveSettings', settings: settingsToSave }) 
+                });
+            } catch (error) {
+                alert("Помилка збереження налаштувань в хмару!");
+            }
+        }
 
         // Глобальні змінні для поточного редагування
         let currentEditType = null;
@@ -606,12 +658,16 @@
             if(!confirm("Дійсно видалити?")) return;
             if(type === 'discount') { discountsList = discountsList.filter(d => d.id !== id); renderSettingsDiscounts(); }
             if(type === 'service') { customServicesList = customServicesList.filter(s => s.id !== id); renderSettingsServices(); }
+            
+            saveSettingsToCloud(); // Зберігаємо видалення в хмару
             showToast("Успішно видалено");
         }
+        
         function clearPricesAlert() {
             if(confirm("Ви впевнені, що хочете видалити всі ціни?")) {
                 roomsList.forEach(r => { r.priceWeekday = 0; r.priceWeekend = 0; });
                 renderPriceGrid();
+                saveSettingsToCloud(); // Зберігаємо обнулення в хмару
                 showToast("Ціни очищено");
             }
         }
@@ -742,21 +798,12 @@
                 renderPriceGrid();
             }
 
+            saveSettingsToCloud(); // Зберігаємо всі зміни в Google Таблицю!
             closeGenericModal(); 
             showToast("Збережено успішно!"); 
         }
 
-        // --- ЗАВАНТАЖЕННЯ ДАНИХ (БРОНІ) ---
-        async function loadBookings() {
-            try {
-                const response = await fetch(API_URL);
-                allBookings = await response.json();
-                renderTable(allBookings);
-                if(document.getElementById('view-grid').style.display === 'flex') renderTimeline();
-                if(document.getElementById('view-guests').style.display === 'block') renderGuests();
-            } catch (error) { console.error("Помилка:", error); }
-        }
-
+        // --- ЛОГІКА ДЛЯ РЕНДЕРУ БАЗИ ГОСТЕЙ ---
         function renderGuests(searchTerm = "") {
             const tbody = document.getElementById('guestsTableBody');
             tbody.innerHTML = '';
@@ -886,7 +933,7 @@
 
         // --- СІТКА ЦІН (Конструктор з навігацією) ---
         let priceTimelineBaseDate = new Date();
-        priceTimelineBaseDate.setDate(1); // Завжди починаємо з 1 числа
+        priceTimelineBaseDate.setDate(1);
 
         function shiftPriceTimeline(months) { 
             priceTimelineBaseDate.setMonth(priceTimelineBaseDate.getMonth() + months); 
@@ -951,7 +998,6 @@
             document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('.status-btn[data-status="Нова бронь"]').classList.add('active');
             
-            // Динамічно формуємо список номерів у формі
             const cottageSelect = document.getElementById('adminCottage');
             cottageSelect.innerHTML = roomsList.map(r => `<option value="${r.name}">${r.name} (${r.desc})</option>`).join('');
 
@@ -991,7 +1037,8 @@
             catch (error) { alert("Помилка!"); } finally { btn.innerText = originalText; btn.disabled = false; }
         });
 
-        window.onload = loadBookings;
+        // Запуск при завантаженні сторінки (Завантажить броні і налаштування з хмари)
+        window.onload = initApp;
     </script>
 </body>
 </html>
