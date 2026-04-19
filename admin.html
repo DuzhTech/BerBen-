@@ -173,6 +173,11 @@
         .toast { background: #111827; color: white; padding: 14px 24px; border-radius: 12px; font-size: 14px; font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; opacity: 0; transform: translateY(20px); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .toast.show { opacity: 1; transform: translateY(0); }
         .toast-icon { width: 20px; height: 20px; color: var(--success); }
+
+        /* Перемикач режимів шахматки */
+        .mode-toggle { display: flex; background: #F3F4F6; padding: 4px; border-radius: 10px; margin: 0 16px; }
+        .mode-btn { padding: 6px 16px; font-size: 13px; font-weight: 600; color: #6B7280; cursor: pointer; border-radius: 8px; transition: 0.2s; user-select: none;}
+        .mode-btn.active { background: #FFFFFF; color: #111827; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
@@ -231,13 +236,20 @@
         </div>
 
         <div id="view-grid" style="display: none; flex-direction: column; height: 100%;">
-            <div class="timeline-toolbar">
+           <div class="timeline-toolbar">
                 <div class="timeline-nav">
                     <button class="btn-icon" onclick="shiftTimeline(-1)"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
-                    <span class="timeline-month-label" id="timelineMonthLabel">Березень 2026</span>
+                    <span class="timeline-month-label" id="timelineMonthLabel" style="min-width: 140px; text-align: center;">Березень 2026</span>
                     <button class="btn-icon" onclick="shiftTimeline(1)"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
                 </div>
+                
+                <div class="mode-toggle">
+                    <div id="mode-month" class="mode-btn active" onclick="setTimelineMode('month')">Місяць</div>
+                    <div id="mode-cont" class="mode-btn" onclick="setTimelineMode('continuous')">35 Днів</div>
+                </div>
+
                 <button class="btn-secondary" onclick="resetTimelineToToday()" style="padding: 8px 16px; font-size: 13px;">Сьогодні</button>
+            </div>
             </div>
             <div class="timeline-wrapper">
                 <div class="timeline-sidebar">
@@ -873,47 +885,94 @@
         });
 
         // --- ШАХМАТКА БРОНЮВАНЬ ---
-        let timelineBaseDate = new Date(); timelineBaseDate.setDate(timelineBaseDate.getDate() - 3);
-        function shiftTimeline(months) { timelineBaseDate.setMonth(timelineBaseDate.getMonth() + months); renderTimeline(); }
-        function resetTimelineToToday() { timelineBaseDate = new Date(); timelineBaseDate.setDate(timelineBaseDate.getDate() - 3); renderTimeline(); }
+        let timelineMode = 'month'; // Режим за замовчуванням
+        let timelineBaseDate = new Date(); 
+        timelineBaseDate.setDate(1); 
+
+        // Функція перемикання режиму
+        function setTimelineMode(mode) {
+            timelineMode = mode;
+            document.getElementById('mode-month').classList.toggle('active', mode === 'month');
+            document.getElementById('mode-cont').classList.toggle('active', mode === 'continuous');
+            resetTimelineToToday();
+        }
+
+        function shiftTimeline(months) { 
+            if (timelineMode === 'continuous') {
+                // В режимі 35 днів стрілочки гортають на 2 тижні для зручності
+                timelineBaseDate.setDate(timelineBaseDate.getDate() + (months > 0 ? 14 : -14));
+            } else {
+                timelineBaseDate.setMonth(timelineBaseDate.getMonth() + months); 
+            }
+            renderTimeline(); 
+        }
+        
+        function resetTimelineToToday() { 
+            timelineBaseDate = new Date(); 
+            if (timelineMode === 'month') {
+                timelineBaseDate.setDate(1); 
+            } else {
+                timelineBaseDate.setDate(timelineBaseDate.getDate() - 3); // Відмотуємо на 3 дні назад, щоб бачити вчорашні виїзди
+            }
+            renderTimeline(); 
+        }
 
         function renderTimeline() {
-            const monthsContainer = document.getElementById('timelineMonths'); const datesContainer = document.getElementById('timelineDates');
-            const gridContainer = document.getElementById('timelineGrid'); const roomsContainer = document.getElementById('timelineRooms');
+            const monthsContainer = document.getElementById('timelineMonths'); 
+            const datesContainer = document.getElementById('timelineDates');
+            const gridContainer = document.getElementById('timelineGrid'); 
+            const roomsContainer = document.getElementById('timelineRooms');
             monthsContainer.innerHTML = ''; datesContainer.innerHTML = ''; gridContainer.innerHTML = ''; roomsContainer.innerHTML = '';
 
-            const startDate = new Date(timelineBaseDate); const daysCount = 35; const cellWidth = 60; const daysArr = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-            const today = new Date();
-            const labelDate = new Date(startDate); labelDate.setDate(labelDate.getDate() + 10);
-            document.getElementById('timelineMonthLabel').innerText = labelDate.toLocaleString('uk-UA', { month: 'long', year: 'numeric' });
+            const startDate = new Date(timelineBaseDate); 
+            let daysCount = 35; // За замовчуванням для режиму Continuous
+            
+            // Якщо режим "Місяць" — жорстко ставимо кількість днів поточного місяця
+            if (timelineMode === 'month') {
+                daysCount = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0).getDate();
+            }
 
-            let currentMonth = startDate.getMonth(); let monthName = startDate.toLocaleString('uk-UA', { month: 'long', year: 'numeric' }); let daysInCurrentMonth = 0;
+            const cellWidth = 60; 
+            const daysArr = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+            const today = new Date();
+            
+            document.getElementById('timelineMonthLabel').innerText = startDate.toLocaleString('uk-UA', { month: 'long', year: 'numeric' });
+
+            let currentMonth = startDate.getMonth(); 
+            let monthName = startDate.toLocaleString('uk-UA', { month: 'long', year: 'numeric' }); 
+            let daysInCurrentMonth = 0;
 
             for (let i = 0; i < daysCount; i++) {
                 const d = new Date(startDate); d.setDate(startDate.getDate() + i);
+                
+                // Малюємо верхню шапку місяців (для режиму 35 днів, де можуть бути перетини)
                 if (d.getMonth() !== currentMonth) {
                     monthsContainer.innerHTML += `<div class="timeline-month-cell" style="width: ${daysInCurrentMonth * cellWidth}px">${monthName}</div>`;
-                    currentMonth = d.getMonth(); monthName = d.toLocaleString('uk-UA', { month: 'long', year: 'numeric' }); daysInCurrentMonth = 1;
-                } else { daysInCurrentMonth++; }
-                const isToday = d.toDateString() === today.toDateString(); const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+                    currentMonth = d.getMonth(); 
+                    monthName = d.toLocaleString('uk-UA', { month: 'long', year: 'numeric' }); 
+                    daysInCurrentMonth = 1;
+                } else { 
+                    daysInCurrentMonth++; 
+                }
+                
+                const isToday = d.toDateString() === today.toDateString(); 
+                const isWeekend = d.getDay() === 0 || d.getDay() === 6;
                 datesContainer.innerHTML += `<div class="timeline-date ${isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''}">${d.getDate()} <span>${daysArr[d.getDay()]}</span></div>`;
             }
             monthsContainer.innerHTML += `<div class="timeline-month-cell" style="width: ${daysInCurrentMonth * cellWidth}px">${monthName}</div>`;
 
+            // Малюємо сітку та броні
             roomsList.forEach((room, roomIndex) => {
                 roomsContainer.innerHTML += `<div class="timeline-room">${room.short}<span>${room.desc}</span></div>`;
                 let rowHtml = `<div class="timeline-row-bg" id="grid-row-${roomIndex}" style="position: relative;">`;
                 for (let i = 0; i < daysCount; i++) {
                     const d = new Date(startDate); d.setDate(startDate.getDate() + i);
                     const isWeekend = d.getDay() === 0 || d.getDay() === 6;
-                    
-                    // Форматуємо дату для Flatpickr (РРРР-ММ-ДД)
                     const dateString = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-                    
-                    // Додаємо onclick подію на порожню клітинку
                     rowHtml += `<div class="timeline-cell ${isWeekend ? 'weekend' : ''}" onclick="openNewBookingDrawer('${room.name}', '${dateString}')"></div>`;
                 }
                 rowHtml += `</div>`; gridContainer.innerHTML += rowHtml;
+                
                 const currentRow = document.getElementById(`grid-row-${roomIndex}`);
                 
                 allBookings.forEach((b) => {
@@ -922,6 +981,7 @@
                         const inDate = new Date(b.checkIn); const outDate = new Date(b.checkOut);
                         inDate.setHours(0,0,0,0); outDate.setHours(0,0,0,0);
                         const timelineStart = new Date(startDate); timelineStart.setHours(0,0,0,0);
+                        
                         const offsetDays = Math.round((inDate - timelineStart) / (1000 * 60 * 60 * 24));
                         const durationDays = Math.round((outDate - inDate) / (1000 * 60 * 60 * 24));
                         
@@ -929,15 +989,26 @@
                             let statusClass = 'status-new'; let s = String(b.status).toLowerCase();
                             if (s.includes('підтвердж') || s.includes('заїхав')) statusClass = 'status-confirmed';
                             if (s.includes('скас')) statusClass = 'status-cancelled';
-                            let blockLeft = offsetDays * cellWidth; let blockWidth = durationDays * cellWidth; let paddingLeft = 12;
+                            
+                            let blockLeft = offsetDays * cellWidth; 
+                            let blockWidth = durationDays * cellWidth; 
+                            let paddingLeft = 12;
+                            
                             if (offsetDays < 0) { blockWidth = (durationDays + offsetDays) * cellWidth; blockLeft = 0; paddingLeft = 4; }
-                            if (offsetDays + durationDays > daysCount) blockWidth = (daysCount - offsetDays) * cellWidth;
+                            if (offsetDays + durationDays > daysCount) { blockWidth = (daysCount - offsetDays) * cellWidth; }
+                            
                             currentRow.innerHTML += `<div class="booking-block ${statusClass}" style="left: ${blockLeft}px; width: ${blockWidth}px; padding-left: ${paddingLeft}px;" onclick="openDetailsByRow(${b.row})">${String(b.name).replace(' (Ручна бронь)', '')} <span>${durationDays} ночей</span></div>`;
                         }
                     }
                 });
             });
-            if(timelineBaseDate.getMonth() === (new Date()).getMonth()) document.getElementById('timelineScroll').scrollLeft = 2 * cellWidth; 
+            
+            // Розумний автоскрол при завантаженні (тільки якщо на екрані є "Сьогодні")
+            if(timelineMode === 'month' && timelineBaseDate.getMonth() === today.getMonth()) {
+               document.getElementById('timelineScroll').scrollLeft = Math.max(0, (today.getDate() - 3) * cellWidth); 
+            } else if (timelineMode === 'continuous' && timelineBaseDate <= today) {
+               document.getElementById('timelineScroll').scrollLeft = 0; 
+            }
         }
 
         // --- СІТКА ЦІН (Конструктор з навігацією) ---
