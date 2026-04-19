@@ -442,10 +442,10 @@
 
         // --- БАЗОВІ ДАНІ НАЛАШТУВАНЬ ---
         let roomsList = [
-            { id: 1, name: "Номер 1", short: "Номер 1", desc: "Двомісний", capacity: 2, priceWeekday: 4000, priceWeekend: 5000, active: true },
-            { id: 2, name: "Номер 2", short: "Номер 2", desc: "Сімейний", capacity: 4, priceWeekday: 6500, priceWeekend: 7500, active: true },
-            { id: 3, name: "Номер 3", short: "Номер 3", desc: "Люкс", capacity: 2, priceWeekday: 6500, priceWeekend: 7500, active: true },
-            { id: 4, name: "Номер 4", short: "Номер 4", desc: "Стандарт", capacity: 2, priceWeekday: 6500, priceWeekend: 7500, active: false }
+            { id: 1, name: "Номер 1", short: "Номер 1", desc: "Двомісний", capacity: 2, maxCapacity: 4, priceWeekday: 4000, priceWeekend: 5000, active: true },
+            { id: 2, name: "Номер 2", short: "Номер 2", desc: "Сімейний", capacity: 4, maxCapacity: 7, priceWeekday: 6500, priceWeekend: 7500, active: true },
+            { id: 3, name: "Номер 3", short: "Номер 3", desc: "Люкс", capacity: 4, maxCapacity: 7, priceWeekday: 6500, priceWeekend: 7500, active: true },
+            { id: 4, name: "Номер 4", short: "Номер 4", desc: "Стандарт", capacity: 4, maxCapacity: 7, priceWeekday: 6500, priceWeekend: 7500, active: false }
         ];
 
         let discountsList = [
@@ -623,7 +623,7 @@
                 let badge = r.active ? `<span class="badge confirmed"><div class="status-dot-small" style="background: #059669"></div> Увімкнено</span>` : `<span class="badge cancelled"><div class="status-dot-small" style="background: #DC2626"></div> Вимкнено</span>`;
                 tbody.innerHTML += `<tr>
                     <td><strong>${r.name}</strong><br><span style="color: #6B7280; font-size: 12px;">${r.desc}</span></td>
-                    <td>${r.capacity} гостя</td><td>${badge}</td>
+                    <td>${r.capacity} (до ${r.maxCapacity || r.capacity}) осіб</td><td>${badge}</td>
                     <td><button class="btn-icon-only" onclick="openGenericModal('room', ${r.id})"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button></td>
                 </tr>`;
             });
@@ -695,15 +695,19 @@
             
             if (type === 'room') {
                 title.innerText = id ? 'Редагувати номер' : 'Додати номер';
-                let r = id ? roomsList.find(x => x.id === id) : {name: '', desc: '', capacity: 2, active: true};
+                let r = id ? roomsList.find(x => x.id === id) : {name: '', desc: '', capacity: 2, maxCapacity: 4, active: true};
                 body.innerHTML = `
                     <div class="form-group"><label>Назва номеру:</label><input type="text" id="mRoomName" value="${r.name}" placeholder="Напр. Номер 5"></div>
                     <div class="form-group"><label>Опис (Коротка назва):</label><input type="text" id="mRoomDesc" value="${r.desc}" placeholder="Напр. Стандарт"></div>
-                    <div class="form-group"><label>Місткість (гостей):</label><input type="number" id="mRoomCap" value="${r.capacity}" min="1"></div>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Базова місткість (входить в ціну):</label><input type="number" id="mRoomCap" value="${r.capacity}" min="1"></div>
+                        <div class="form-group"><label>Максимальна місткість:</label><input type="number" id="mRoomMaxCap" value="${r.maxCapacity || r.capacity}" min="1"></div>
+                    </div>
                     <div class="form-group"><label>Доступність:</label>
                         <select id="mRoomStatus"><option value="true" ${r.active?'selected':''}>Увімкнено</option><option value="false" ${!r.active?'selected':''}>Вимкнено</option></select>
                     </div>
                 `;
+            }
             } else if (type === 'price') {
                 title.innerText = 'Конструктор цін';
                 let roomOptions = `<option value="all">Усі номери</option>` + roomsList.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
@@ -754,23 +758,24 @@
         function closeGenericModal() { document.getElementById('genericModal').classList.remove('active'); }
 
         // Функція збереження змін з модалки
-        function saveGenericModal() { 
-            if (currentEditType === 'room') {
+        funcif (currentEditType === 'room') {
                 const name = document.getElementById('mRoomName').value || 'Новий номер';
                 const desc = document.getElementById('mRoomDesc').value;
                 const cap = parseInt(document.getElementById('mRoomCap').value) || 2;
+                const maxCap = parseInt(document.getElementById('mRoomMaxCap').value) || cap;
                 const active = document.getElementById('mRoomStatus').value === 'true';
                 
                 if (currentEditId) {
                     let r = roomsList.find(x => x.id === currentEditId);
-                    r.name = name; r.short = name; r.desc = desc; r.capacity = cap; r.active = active;
+                    r.name = name; r.short = name; r.desc = desc; r.capacity = cap; r.maxCapacity = maxCap; r.active = active;
                 } else {
-                    roomsList.push({ id: Date.now(), name: name, short: name, desc: desc, capacity: cap, priceWeekday: 4000, priceWeekend: 5000, active: active });
+                    roomsList.push({ id: Date.now(), name: name, short: name, desc: desc, capacity: cap, maxCapacity: maxCap, priceWeekday: 4000, priceWeekend: 5000, active: active });
                 }
                 renderSettingsRooms();
                 if(document.getElementById('set-prices').style.display === 'block') renderPriceGrid();
+            }
 
-            } else if (currentEditType === 'discount') {
+            else if (currentEditType === 'discount') {
                 const days = document.getElementById('mDiscDays').value || 2;
                 const pct = document.getElementById('mDiscPercent').value || 15;
                 if (currentEditId) {
