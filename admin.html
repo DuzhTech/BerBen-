@@ -1054,15 +1054,44 @@
         function closeDrawer() { document.getElementById('bookingDrawer').classList.remove('active'); }
 
         document.getElementById('adminBookingForm').addEventListener('submit', async function(e) {
-            e.preventDefault(); const btn = document.getElementById('adminSubmitBtn'); const originalText = btn.innerText; btn.innerText = "Збереження..."; btn.disabled = true;
+            e.preventDefault(); 
+            const btn = document.getElementById('adminSubmitBtn'); 
+            const originalText = btn.innerText; 
+            btn.innerText = "Збереження..."; 
+            btn.disabled = true;
+            
             const bookingData = { 
-                checkIn: document.getElementById('adminCheckIn').value, checkOut: document.getElementById('adminCheckOut').value, 
-                cottage: document.getElementById('adminCottage').value, name: document.getElementById('adminName').value, 
-                phone: document.getElementById('adminPhone').value, status: document.querySelector('.status-btn.active').getAttribute('data-status') 
+                checkIn: document.getElementById('adminCheckIn').value, 
+                checkOut: document.getElementById('adminCheckOut').value, 
+                cottage: document.getElementById('adminCottage').value, 
+                name: document.getElementById('adminName').value, 
+                phone: document.getElementById('adminPhone').value, 
+                status: document.querySelector('.status-btn.active').getAttribute('data-status') 
             };
+            
             if (editingRowNumber !== null) bookingData.row = editingRowNumber;
-            try { await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(bookingData) }); closeDrawer(); showToast("Бронь успішно збережена"); loadBookings(); } 
-            catch (error) { alert("Помилка!"); } finally { btn.innerText = originalText; btn.disabled = false; }
+            
+            try { 
+                // Відправляємо запит
+                await fetch(API_URL, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+                    body: JSON.stringify(bookingData) 
+                }); 
+                
+                closeDrawer(); 
+                showToast("Бронь успішно збережена"); 
+                
+                // Правильне оновлення даних!
+                initApp(); 
+                
+            } catch (error) { 
+                console.error("Деталі помилки:", error);
+                alert("Помилка збереження! Перевір консоль (F12)."); 
+            } finally { 
+                btn.innerText = originalText; 
+                btn.disabled = false; 
+            }
         });
 
         // Запуск при завантаженні сторінки (Завантажить броні і налаштування з хмари)
