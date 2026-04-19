@@ -413,11 +413,11 @@
                             <div class="form-group"><label>Дітей:</label><input type="number" value="0" min="0"></div>
                         </div>
                     </div>
-                    <div class="form-section" style="background: #F9FAFB; border-color: #E5E7EB;">
+                   <div class="form-section" style="background: #F9FAFB; border-color: #E5E7EB;">
                         <span class="form-section-title">Вартість бронювання</span>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #4B5563;"><span>Загальна вартість:</span><strong>0 грн</strong></div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #4B5563;"><span>Передоплата:</span><strong style="color: var(--success);">0 грн</strong></div>
-                        <div style="display: flex; justify-content: space-between; border-top: 1px solid #D1D5DB; padding-top: 12px; font-size: 16px;"><span>До сплати:</span><strong style="color: var(--accent);">0 грн</strong></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #4B5563;"><span>Загальна вартість (зі знижкою):</span><strong id="prevBase">0 грн</strong></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #4B5563;"><span>Передоплата:</span><strong id="prevPrepay" style="color: var(--success);">0 грн</strong></div>
+                        <div style="display: flex; justify-content: space-between; border-top: 1px solid #D1D5DB; padding-top: 12px; font-size: 16px;"><span>До сплати:</span><strong id="prevTotal" style="color: var(--accent);">0 грн</strong></div>
                     </div>
                 </form>
             </div>
@@ -1064,10 +1064,57 @@
             });
         }
 
-        // --- ПАНЕЛЬ ДЕТАЛЕЙ БРОНЮВАННЯ ---
-        const checkOutPicker = flatpickr("#adminCheckOut", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y" });
-        const checkInPicker = flatpickr("#adminCheckIn", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", onChange: function(s, d) { checkOutPicker.set("minDate", d); }});
+        // --- ПАНЕЛЬ ДЕТАЛЕЙ БРОНЮВАННЯ ТА ЖИВИЙ КАЛЬКУЛЯТОР ---
+        function updatePricePreview() {
+            const checkInStr = document.getElementById('adminCheckIn').value;
+            const checkOutStr = document.getElementById('adminCheckOut').value;
+            const roomName = document.getElementById('adminCottage').value;
+            const guests = parseInt(document.getElementById('adminGuests').value) || 2;
 
+            if (!checkInStr || !checkOutStr || !roomName) return;
+
+            const d1 = new Date(checkInStr);
+            const d2 = new Date(checkOutStr);
+            let nights = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+            if (nights < 1) nights = 1;
+
+            const room = roomsList.find(r => r.name === roomName || roomName.includes(r.name));
+            if (!room) return;
+
+            let basePriceTotal = 0;
+            for (let i = 0; i < nights; i++) {
+                let curr = new Date(d1); curr.setDate(curr.getDate() + i);
+                let isWeekend = (curr.getDay() === 0 || curr.getDay() === 6);
+                basePriceTotal += isWeekend ? room.priceWeekend : room.priceWeekday;
+            }
+
+            let extraGuests = Math.max(0, guests - room.capacity);
+            let extraGuestFee = extraGuests * 2500 * nights;
+
+            let discountPercent = 0;
+            if (nights >= 30) discountPercent = 0.73;
+            else if (nights >= 14) discountPercent = 0.57;
+            else if (nights >= 7) discountPercent = 0.43;
+            else if (nights >= 3) discountPercent = 0.20;
+            else if (nights >= 2) discountPercent = 0.15;
+
+            let amountToDiscount = basePriceTotal + extraGuestFee;
+            let discountAmount = Math.round(amountToDiscount * discountPercent);
+            let totalPrice = amountToDiscount - discountAmount;
+            let prepay = Math.round(totalPrice / 2);
+
+            document.getElementById('prevBase').innerText = totalPrice + " грн";
+            document.getElementById('prevPrepay').innerText = prepay + " грн";
+            document.getElementById('prevTotal').innerText = totalPrice + " грн";
+        }
+
+        // Вішаємо слухачів на поля, щоб ціна мінялась при кожному кліку
+        document.getElementById('adminCottage').addEventListener('change', updatePricePreview);
+        document.getElementById('adminGuests').addEventListener('input', updatePricePreview);
+        
+        // ОНОВЛЕНІ РЯДКИ FLATPICKR (з доданим onChange: updatePricePreview)
+        const checkOutPicker = flatpickr("#adminCheckOut", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", onChange: updatePricePreview });
+        const checkInPicker = flatpickr("#adminCheckIn", { locale: "uk", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", onChange: function(s, d) { checkOutPicker.set("minDate", d); updatePricePreview(); }});
         document.querySelectorAll('.status-btn').forEach(btn => { 
             btn.addEventListener('click', function() { document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); }); 
         });
