@@ -707,7 +707,6 @@
                         <select id="mRoomStatus"><option value="true" ${r.active?'selected':''}>Увімкнено</option><option value="false" ${!r.active?'selected':''}>Вимкнено</option></select>
                     </div>
                 `;
-            }
             } else if (type === 'price') {
                 title.innerText = 'Конструктор цін';
                 let roomOptions = `<option value="all">Усі номери</option>` + roomsList.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
@@ -758,7 +757,8 @@
         function closeGenericModal() { document.getElementById('genericModal').classList.remove('active'); }
 
         // Функція збереження змін з модалки
-        funcif (currentEditType === 'room') {
+        function saveGenericModal() { 
+            if (currentEditType === 'room') {
                 const name = document.getElementById('mRoomName').value || 'Новий номер';
                 const desc = document.getElementById('mRoomDesc').value;
                 const cap = parseInt(document.getElementById('mRoomCap').value) || 2;
