@@ -397,7 +397,7 @@
                         <div class="form-grid">
                             <div class="form-group"><label>Дата заїзду:</label><input type="text" id="adminCheckIn" required></div>
                             <div class="form-group"><label>Дата виїзду:</label><input type="text" id="adminCheckOut" required></div>
-                            <div class="form-group"><label>Дорослих:</label><input type="number" value="2" min="1"></div>
+                            <div class="form-group"><label>Дорослих:</label><input type="number" id="adminGuests" value="2" min="1"></div>
                             <div class="form-group"><label>Дітей:</label><input type="number" value="0" min="0"></div>
                         </div>
                     </div>
@@ -1039,6 +1039,7 @@
             document.getElementById('drawerTitle').innerText = `Деталі броні`;
             document.getElementById('adminName').value = String(booking.name).replace(' (Ручна бронь)', ''); 
             document.getElementById('adminPhone').value = '+' + formatPhone(booking.phone);
+            document.getElementById('adminGuests').value = booking.guests || 2;
             
             const cottageSelect = document.getElementById('adminCottage');
             cottageSelect.innerHTML = roomsList.map(r => `<option value="${r.name}">${r.name} (${r.desc})</option>`).join('');
@@ -1066,6 +1067,7 @@
                 cottage: document.getElementById('adminCottage').value, 
                 name: document.getElementById('adminName').value, 
                 phone: document.getElementById('adminPhone').value, 
+                guests: document.getElementById('adminGuests').value, // ДОДАЛИ ЦЕЙ РЯДОК
                 status: document.querySelector('.status-btn.active').getAttribute('data-status') 
             };
             
