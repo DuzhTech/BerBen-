@@ -453,10 +453,13 @@
         // --- ІНІЦІАЛІЗАЦІЯ: ЗАВАНТАЖУЄМО БРОНІ ТА НАЛАШТУВАННЯ З ХМАРИ ---
         async function initApp() {
             try {
+                // Додаємо мілісекунди, щоб посилання завжди було унікальним (анти-кеш)
+                const t = new Date().getTime();
+                
                 // Відправляємо 2 запити паралельно: за бронями і за налаштуваннями
                 const [bookingsRes, settingsRes] = await Promise.all([
-                    fetch(API_URL),
-                    fetch(API_URL + "?action=settings")
+                    fetch(API_URL + "?t=" + t),
+                    fetch(API_URL + "?action=settings&t=" + t)
                 ]);
                 
                 allBookings = await bookingsRes.json();
@@ -1084,8 +1087,8 @@
                 closeDrawer(); 
                 showToast("Бронь успішно збережена"); 
                 
-                // Правильне оновлення даних!
-                initApp(); 
+                // Чекаємо, поки нові дані завантажаться
+                await initApp();
                 
             } catch (error) { 
                 console.error("Деталі помилки:", error);
